@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
-# from IPython.display import Video, Image
+from IPython.display import Video, Image
 
 class Loom:
     def __init__(
@@ -94,8 +94,8 @@ class Loom:
                 if frame_filename.exists():
                     frame_filename.unlink()
 
-    # def show(self):
-    #     if self.file_format in {"mp4", "mkv"}:
-    #         return Video(str(self.output_filepath))
-    #     elif self.file_format in {"gif", "apng"}:
-    #         return Image(str(self.output_filepath))
+    def show(self):
+        if self.file_format in {"mp4", "mkv"}:
+            return Video(str(self.output_filepath))
+        elif self.file_format in {"gif", "apng"}:
+            return Image(str(self.output_filepath))
