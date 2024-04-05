@@ -27,7 +27,6 @@ jobs:
       - uses: FedericoCarboni/setup-ffmpeg@v3
         with:
           ffmpeg-version: release
-          linking-type: static
           github-token: ${{ github.server_url == 'https://github.com' && github.token || '' }}
       - name: Run tests
         run: poetry run pytest -v
