@@ -1,2 +1,3 @@
 # matplotloom
-Easy animations with matplotlib
+
+Weave your frames into easy matplotlib animations.
