@@ -1,4 +1,5 @@
 import subprocess
+from typing import Union
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -10,8 +11,8 @@ from IPython.display import Video, Image
 class Loom:
     def __init__(
         self,
-        output_filepath: str | Path,
-        frames_directory: str | Path = Path(TemporaryDirectory().name),
+        output_filepath: Union[Path, str],
+        frames_directory: Union[Path, str] = Path(TemporaryDirectory().name),
         fps: int = 30,
         keep_frames: bool = False,
         overwrite: bool = False,
