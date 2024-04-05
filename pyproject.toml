@@ -8,8 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-matplotlib = "^3.8.3"
-ipython = "^8.23.0"
+matplotlib = "^3.0.0"
+ipython = "^8.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
