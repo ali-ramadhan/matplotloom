@@ -24,6 +24,8 @@ with Loom("sine_wave_animation.gif", fps=30) as loom:
         loom.save_frame(fig)
 ```
 
+![sine wave animation gif](examples/sine_wave.gif)
+
 ### Rotating circular sine wave
 
 ```python
@@ -31,7 +33,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotloom import Loom
 
-with Loom("3d_rotate.gif", fps=10) as loom:
+with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
     for i in range(36):
         fig, ax = plt.subplots(figsize=(12, 8), subplot_kw={"projection": "3d"})
         
@@ -48,5 +50,8 @@ with Loom("3d_rotate.gif", fps=10) as loom:
         fig.colorbar(surf, shrink=0.5, aspect=5)
 
         loom.save_frame(fig)
-
 ```
+
+
+https://github.com/ali-ramadhan/matplotloom/assets/20099589/77f2f0a2-6be1-46f6-b4ba-32a44b11441b
+
