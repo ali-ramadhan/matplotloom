@@ -29,4 +29,4 @@ jobs:
           ffmpeg-version: release
           github-token: ${{ github.server_url == 'https://github.com' && github.token || '' }}
       - name: Run tests
-        run: poetry run pytest -v
+        run: poetry run pytest -vv --durations=0
