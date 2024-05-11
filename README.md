@@ -1,6 +1,35 @@
 # matplotloom
 
-Weave your frames into easy matplotlib animations.
+Weave your frames into matplotlib animations.
+
+## Why use matplotloom?
+
+* The main idea behind matplotloom is to describe how to generate each frame of your animation from scratch, instead of generating an animation by modifying one existing plot. This simplifies generating animations. It also ensures that every feature can be animated and that the generation process can be easily parallelized.
+* matplotlib has two tools for making animations: `FuncAnimation` and `ArtistAnimation`. But to use them you have to write your plotting code differently to modify an existing frame. This makes it difficult to go from plotting still figures to making animations. And some features are non-trivial to animate.
+* [celluloid](https://github.com/jwkvam/celluloid) is a nice package for making matplotlib animations easily, but as it relies on `ArtistAnimation` under the hood it does come with some [limitations](https://github.com/jwkvam/celluloid?tab=readme-ov-file#limitations) such as not being able to animate titles. It also hasn't been maintained since 2018.
+* Plotting many frames (hundreds to thousands+) can be slow but with matplotloom you can use a `ParallelLoom` to plot each frame in parallel, speeding up the animation process significantly especially if you can dedicate many cores to plotting.
+
+## Installation
+
+matplotloom is published on PyPI so you can install matplotloom via `pip`
+
+```bash
+pip install matplotloom
+```
+
+or `poetry`
+
+```bash
+poetry add matplotloom
+```
+
+or `conda`
+
+```bash
+conda install matplotloom
+```
+
+matplotloom requires Python 3.9+ and is continuously tested on Linux, Windows, and Mac. Ensure you have `ffmpeg` installed so that animations can be generated.
 
 ## Examples
 
@@ -52,6 +81,4 @@ with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
         loom.save_frame(fig)
 ```
 
-
 https://github.com/ali-ramadhan/matplotloom/assets/20099589/77f2f0a2-6be1-46f6-b4ba-32a44b11441b
-
