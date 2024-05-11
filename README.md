@@ -9,6 +9,10 @@ Weave your frames into matplotlib animations.
 * [celluloid](https://github.com/jwkvam/celluloid) is a nice package for making matplotlib animations easily, but as it relies on `ArtistAnimation` under the hood it does come with some [limitations](https://github.com/jwkvam/celluloid?tab=readme-ov-file#limitations) such as not being able to animate titles. It also hasn't been maintained since 2018.
 * Plotting many frames (hundreds to thousands+) can be slow but with matplotloom you can use a `ParallelLoom` to plot each frame in parallel, speeding up the animation process significantly especially if you can dedicate many cores to plotting.
 
+## Notes?
+
+* You have to call `loom.save_frame(fig)` for each frame. While the `Loom` object can be made to do this automatically it would have to create and own the `Figure` instance and I wanted full control over the creation of the `Figure`.
+
 ## Installation
 
 matplotloom is published on PyPI so you can install matplotloom via `pip`
