@@ -17,6 +17,7 @@ class Loom:
         keep_frames: bool = False,
         overwrite: bool = False,
         verbose: bool = False,
+        parallel: bool = False,
         savefig_kwargs: dict = {}
     ) -> None:
         self.output_filepath = Path(output_filepath)
@@ -25,10 +26,16 @@ class Loom:
         self.keep_frames = keep_frames
         self.overwrite = overwrite
         self.verbose = verbose
+        self.parallel = parallel
         self.savefig_kwargs = savefig_kwargs
         
+        if not self.parallel:
+            self.frame_counter = 0
+        else:
+            # We don't use the frame counter in parallel mode.
+            self.frame_counter = None
+
         self.frame_filepaths = []
-        self.frame_counter = 0
         self.file_format = self.output_filepath.suffix[1:]
 
         self.output_directory = self.output_filepath.parent
@@ -49,14 +56,20 @@ class Loom:
         self.save_video()
         return
     
-    def save_frame(self, fig):
-        frame_filepath = self.frames_directory / f"frame_{self.frame_counter:06d}.png"
-
-        self.frame_counter += 1
+    def save_frame(self, fig, frame_number=None):
+        if not self.parallel:
+            frame_filepath = self.frames_directory / f"frame_{self.frame_counter:06d}.png"
+            self.frame_counter += 1
+        else:
+            frame_filepath = self.frames_directory / f"frame_{frame_number:06d}.png"
+        
         self.frame_filepaths.append(frame_filepath)
         
         if self.verbose:
-            print(f"Saving frame {self.frame_counter} to {frame_filepath}")
+            if not self.parallel:
+                print(f"Saving frame {self.frame_counter} to {frame_filepath}")
+            else:
+                print(f"Saving frame {frame_number} to {frame_filepath}")
         
         fig.savefig(frame_filepath, **self.savefig_kwargs)
         plt.close(fig)
