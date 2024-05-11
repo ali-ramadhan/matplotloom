@@ -38,6 +38,9 @@ class Loom:
         if self.verbose:
             print(f"output_filepath: {self.output_filepath}")
             print(f"frames_directory: {self.frames_directory}")
+        
+        if self.output_filepath.exists() and not self.overwrite:
+            raise FileExistsError(f"Output file '{self.output_filepath}' already exists. Set `overwrite=True` to overwrite the file.")
     
     def __enter__(self):
         return self
