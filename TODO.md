@@ -18,4 +18,5 @@
 
 * `pcolormesh`: https://matplotlib.org/stable/gallery/animation/dynamic_image.html#sphx-glr-gallery-animation-dynamic-image-py
 * Double pendulum: https://matplotlib.org/stable/gallery/animation/double_pendulum.html#sphx-glr-gallery-animation-double-pendulum-py
-* Cartopy: https://scitools.org.uk/cartopy/docs/latest/gallery/index.html
+* Cartopy: https://scitools.org.uk/cartopy/docs/latest/gallery/lines_and_polygons/nightshade.html#sphx-glr-gallery-lines-and-polygons-nightshade-py
+* Lorenz63: https://docs.makie.org/stable/
