@@ -75,14 +75,16 @@ class Loom:
         plt.close(fig)
 
     def save_video(self):
+        # See: https://github.com/ali-ramadhan/matplotloom/issues/1
+        scale_filter = "scale='if(mod(iw,2),-2,iw)':'if(mod(ih,2),-2,ih)':flags=lanczos"
+
         if self.file_format == "mp4":
             command = [
                 "ffmpeg",
                 "-y",
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
-                # See: https://github.com/ali-ramadhan/matplotloom/issues/1
-                "-vf", "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+                "-vf", scale_filter,
                 "-c:v", "libx264", 
                 "-pix_fmt", "yuv420p",
                 str(self.output_filepath)
@@ -94,9 +96,8 @@ class Loom:
                 "-framerate", str(self.fps),
                 "-f", "image2",
                 "-i", str(self.frames_directory / "frame_%06d.png"),
-                # See: https://github.com/ali-ramadhan/matplotloom/issues/1 for scale filter
-                # See: https://superuser.com/a/556031 for the rest of the filters
-                "-vf", 'scale=trunc(iw/2)*2:trunc(ih/2)*2,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse',
+                # See: https://superuser.com/a/556031 for the split and palette filters
+                "-vf", f"{scale_filter},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                 str(self.output_filepath)
             ]
         
