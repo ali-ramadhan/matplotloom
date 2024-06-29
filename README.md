@@ -9,9 +9,13 @@ Weave your frames into matplotlib animations.
 * [celluloid](https://github.com/jwkvam/celluloid) is a nice package for making matplotlib animations easily, but as it relies on `ArtistAnimation` under the hood it does come with some [limitations](https://github.com/jwkvam/celluloid?tab=readme-ov-file#limitations) such as not being able to animate titles. It also hasn't been maintained since 2018.
 * Plotting many frames (hundreds to thousands+) can be slow but with matplotloom you can use a parallel `Loom` to plot each frame in parallel, speeding up the animation process significantly especially if you can dedicate many cores to plotting.
 
-## Notes?
+## Some notes to users
 
-* You have to call `loom.save_frame(fig)` for each frame. While the `Loom` object can be made to do this automatically it would have to create and own the `Figure` instance and I wanted full control over the creation of the `Figure`.
+* You can use `loom.show()` to display animations in Jupyter notebooks.
+* Anxious about animation progress? Pass `verbose=True` or use tqdm to monitor animation progress.
+* Animations taking too long to make or do you have tons of frames? You can parallelize frame creating by [looming in parallel](#looming-in-parallel).
+* You have to call `loom.save_frame(fig)` for each frame (see the examples). While the `Loom` object can be made to do this automatically it would have to create and own the `Figure` instance and I wanted full control over the creation of the `Figure` for maximum flexibility.
+* matplotloom is going to be slow. But it's flexible and compatible with all of matplotlib! The real speedup comes from parallelizing frame creation, especially if you have a ton of frames to make.
 
 ## Installation
 
@@ -87,7 +91,7 @@ with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
 
 https://github.com/ali-ramadhan/matplotloom/assets/20099589/77f2f0a2-6be1-46f6-b4ba-32a44b11441b
 
-## Parallel mode
+## Looming in parallel
 
 By passing `parallel=True` when creating a `Loom`, you can save frames using `loom.save_frame(fig, frame_number)` which allows you to plot and save all your frames in parallel. One easy way to leverage this is by using joblib to parallelize the for loop. For example, here's how you can parallelize the simple sine wave example:
 
