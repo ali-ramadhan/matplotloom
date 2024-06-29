@@ -1,5 +1,7 @@
 import pytest
 
+import matplotlib.pyplot as plt
+
 from pathlib import Path
 from matplotlib.figure import Figure
 from matplotloom import Loom
@@ -30,7 +32,6 @@ def test_save_frame(basic_loom):
     assert len(basic_loom.frame_filepaths) == 1
     assert basic_loom.frame_filepaths[0].exists()
 
-# This test might require a mock of subprocess.Popen or an actual ffmpeg installation
 def test_video_creation(basic_loom):
     fig = Figure()
     ax = fig.subplots()
@@ -40,7 +41,7 @@ def test_video_creation(basic_loom):
     basic_loom.save_video()
     assert basic_loom.output_filepath.exists()
 
-# Ensure frames are kept or deleted according to the keep_frames flag
+# Ensure frames are kept or deleted according to the `keep_frames` flag.
 def test_keep_frames(basic_loom):
     fig = Figure()
     ax = fig.subplots()
@@ -78,11 +79,11 @@ def test_overwrite(tmp_path):
     with open(output_filepath, "w") as f:
         f.write("Dummy content")
 
-    # Test with overwrite=False (default)
+    # Test with `overwrite=False`` (default)
     with pytest.raises(FileExistsError):
         Loom(output_filepath)
 
-    # Test with overwrite=True
+    # Test with `overwrite=True`
     loom = Loom(output_filepath, overwrite=True)
     fig = Figure()
     ax = fig.subplots()
@@ -93,3 +94,21 @@ def test_overwrite(tmp_path):
     # Check if the output file was overwritten
     assert output_filepath.exists()
     assert output_filepath.stat().st_size > len("Dummy content")
+
+# Test that `Loom`` handles errors correctly and doesn't invoke ffmpeg when an exception occurs.
+def test_loom_error_handling(tmp_path):
+    output_file = tmp_path / "test_error.mp4"    
+
+    with pytest.raises(ValueError, match="Test error"):
+        with Loom(output_file, verbose=True) as loom:
+            fig, ax = plt.subplots()
+            ax.plot([1, 2, 3], [1, 2, 3])
+            loom.save_frame(fig)
+            raise ValueError("Test error")
+
+    # Check that the output file was not created
+    assert not output_file.exists()
+
+    # Check that no frame files remain
+    frames_dir = Path(loom.frames_directory)
+    assert not any(frames_dir.glob("frame_*.png"))
