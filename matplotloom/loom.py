@@ -53,8 +53,19 @@ class Loom:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.save_video()
-        return
+        if exc_type is None:
+            self.save_video()
+        else:
+            if not self.keep_frames:
+                for frame_filepath in self.frame_filepaths:
+                    if frame_filepath.exists():
+                        frame_filepath.unlink()
+            
+            if self.verbose:
+                print(f"An error occurred: {exc_type.__name__}: {exc_value}")
+                print("Animation was not saved.")
+        
+        return False  # Propagate the exception if there was one
     
     def save_frame(self, fig, frame_number=None):
         if not self.parallel:
