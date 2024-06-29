@@ -33,6 +33,7 @@ loom = Loom(
     "bessel_wave.mp4",
     fps = 30,
     overwrite = True,
+    verbose = True,
     savefig_kwargs = {
         "dpi": 100,
         "bbox_inches": "tight"
