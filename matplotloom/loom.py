@@ -12,7 +12,7 @@ class Loom:
     def __init__(
         self,
         output_filepath: Union[Path, str],
-        frames_directory: Union[Path, str] = Path(TemporaryDirectory().name),
+        frames_directory: Union[Path, str, None] = None,
         fps: int = 30,
         keep_frames: bool = False,
         overwrite: bool = False,
@@ -21,7 +21,6 @@ class Loom:
         savefig_kwargs: dict = {}
     ) -> None:
         self.output_filepath = Path(output_filepath)
-        self.frames_directory = Path(frames_directory)
         self.fps = fps
         self.keep_frames = keep_frames
         self.overwrite = overwrite
@@ -29,6 +28,13 @@ class Loom:
         self.parallel = parallel
         self.savefig_kwargs = savefig_kwargs
         
+        self._temp_dir = None
+        if frames_directory is None:
+            self._temp_dir = TemporaryDirectory()
+            self.frames_directory = Path(self._temp_dir.name)
+        else:
+            self.frames_directory = Path(frames_directory)
+
         if not self.parallel:
             self.frame_counter = 0
         else:
@@ -65,6 +71,9 @@ class Loom:
                 for frame_filepath in self.frame_filepaths:
                     if frame_filepath.exists():
                         frame_filepath.unlink()
+            
+            if self._temp_dir:
+                self._temp_dir.cleanup()
 
         return False  # Propagate the exception if there was one
     
