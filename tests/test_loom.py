@@ -127,9 +127,4 @@ def test_loom_error_handling(tmp_path):
     assert not output_file.exists()
 
     frames_dir = Path(loom.frames_directory)
-    
-    print(f"Contents of {frames_dir}:")
-    for item in frames_dir.iterdir():
-        print(f"{item.name}")
-
     assert not any(frames_dir.glob("frame_*.png"))
