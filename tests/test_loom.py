@@ -111,4 +111,8 @@ def test_loom_error_handling(tmp_path):
 
     # Check that no frame files remain
     frames_dir = Path(loom.frames_directory)
+
+    for item in frames_dir.iterdir():
+        print(f"{item.name}")
+
     assert not any(frames_dir.glob("frame_*.png"))
