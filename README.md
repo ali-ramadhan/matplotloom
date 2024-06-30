@@ -1,8 +1,10 @@
 # matplotloom
 
-Weave your frames into matplotlib animations.
+Weave your frames into matplotlib animations!
 
 ## Why use matplotloom?
+
+To visualize simulation output for computational fluid dynamics I've had to make long animations with complex figures for a long time. The animations consist of thousands of frames and the figures are too complex for `FuncAnimation` and `ArtistAnimation`. This package aims to simplify and massively speed up the process of making these kinds of animations.
 
 * The main idea behind matplotloom is to describe how to generate each frame of your animation from scratch, instead of generating an animation by modifying one existing plot. This simplifies generating animations. See the examples below and how the code inside the `for` loops is plain and familiar matplotlib. It also ensures that every feature can be animated and that the generation process can be easily parallelized.
 * matplotlib has two tools for making animations: `FuncAnimation` and `ArtistAnimation`. But to use them you have to write your plotting code differently to modify an existing frame. This makes it difficult to go from plotting still figures to making animations. And some features are non-trivial to animate.
@@ -12,7 +14,7 @@ Weave your frames into matplotlib animations.
 ## Some notes to users
 
 * You can use `loom.show()` to display animations in Jupyter notebooks.
-* Anxious about animation progress? Pass `verbose=True` or use tqdm to monitor animation progress.
+* Anxious about animation progress? Pass `verbose=True` or use [tqdm](https://github.com/tqdm/tqdm) to monitor progress.
 * Animations taking too long to make or do you have tons of frames? You can parallelize frame creating by [looming in parallel](#looming-in-parallel).
 * You have to call `loom.save_frame(fig)` for each frame (see the examples). While the `Loom` object can be made to do this automatically it would have to create and own the `Figure` instance and I wanted full control over the creation of the `Figure` for maximum flexibility.
 * matplotloom is going to be slow. But it's flexible and compatible with all of matplotlib! The real speedup comes from parallelizing frame creation, especially if you have a ton of frames to make.
