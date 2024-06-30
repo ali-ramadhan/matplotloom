@@ -14,6 +14,8 @@ from scipy.integrate import solve_ivp
 from scipy.special import j0
 from tqdm import tqdm
 
+from matplotloom import Loom
+
 def test_sine_wave():
     with Loom("sine_wave.gif", fps=30) as loom:
         for phase in np.linspace(0, 2*np.pi, 100):
@@ -248,3 +250,6 @@ def test_night_time_shading():
             delayed(plot_frame)(day_of_year, loom, i)
             for i, day_of_year in enumerate(days_of_year)
     )
+
+    assert Path("night_time_shading.mp4").is_file()
+    assert Path("night_time_shading.mp4").stat().st_size > 0
