@@ -5,7 +5,7 @@ on:
 
 jobs:
   pypi_release:
-    name: Tag release and publishe to PyPI
+    name: Tag release and publish to PyPI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
