@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "matplotloom"
-version = "0.6.0"
+version = "0.7.0"
 description = "Weave your frames into matplotlib animations."
 authors = ["ali-ramadhan <ali.hh.ramadhan@gmail.com>"]
 license = "MIT"
@@ -14,6 +14,7 @@ ipython = "^8.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
+sphinx = "^7.3.7"
 
 
 [tool.poetry.group.examples.dependencies]

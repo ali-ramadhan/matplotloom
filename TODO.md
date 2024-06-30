@@ -10,10 +10,8 @@
 ## Documentation
 
 * Add some badges to the README.
-* Write some documentation and add some docstrings.
 * Add documentation GitHub Action.
 
 ## Examples
 
-* Cartopy: https://scitools.org.uk/cartopy/docs/latest/gallery/lines_and_polygons/nightshade.html#sphx-glr-gallery-lines-and-polygons-nightshade-py
 * Lorenz63: https://docs.makie.org/stable/
