@@ -7,11 +7,6 @@
   * https://github.com/matplotlib/matplotlib/blob/v3.8.3/lib/matplotlib/_animation_data.py
 * Output writers besides ffmpeg?
 
-## Documentation
-
-* Add some badges to the README.
-* Add documentation GitHub Action.
-
 ## Examples
 
 * Lorenz63: https://docs.makie.org/stable/
