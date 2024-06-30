@@ -36,9 +36,12 @@ def plot_frame(day_of_year, loom, frame_number):
 loom = Loom(
     "night_time_shading.mp4",
     fps = 10,
-    verbose = True,
     overwrite = True,
-    parallel = True
+    parallel = True,
+    verbose = True,
+    savefig_kwargs = {
+        "bbox_inches": "tight"
+    }
 )
 
 with loom:

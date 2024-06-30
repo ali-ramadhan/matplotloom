@@ -14,13 +14,18 @@ def create_frame(x, y, t):
     z = bessel_wave(r, t, k=2, omega=1, A=1)
     
     pcm = ax1.pcolormesh(x, y, z, cmap=cm.balance, shading='auto', vmin=-1, vmax=1)
+    fig.colorbar(pcm, ax=ax1)
+
     ax1.set_title(f"Bessel wave: t = {t:.3f}")
     ax1.set_xlabel("x")
     ax1.set_ylabel("y")
-    fig.colorbar(pcm, ax=ax1)
+    ax1.set_xlim(-10, 10)
+    ax1.set_ylim(-10, 10)
+    ax1.set_aspect("equal", adjustable="box")
     
     mid = z.shape[0] // 2
     ax2.plot(x[mid], z[mid])
+    
     ax2.set_xlim(x.min(), x.max())
     ax2.set_ylim(-1.1, 1.1)
     ax2.set_title("Cross-section at y = 0")
