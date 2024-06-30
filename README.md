@@ -16,8 +16,14 @@
   <a href="https://badge.fury.io/py/matplotloom">
     <img alt="PyPI version" src="https://badge.fury.io/py/matplotloom.svg">
   </a>
+  <a href="https://aliramadhan.me/matplotloom/">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-stable%20release-blue?style=flat-square">
+  </a>
   <a href="https://github.com/ali-ramadhan/matplotloom/actions/workflows/testing.yml">
-    <img alt="Testing" src="https://github.com/ali-ramadhan/matplotloom/actions/workflows/testing.yml/badge.svg">
+    <img alt="Tests" src="https://github.com/ali-ramadhan/matplotloom/actions/workflows/testing.yml/badge.svg">
+  </a>
+  <a href="https://github.com/ali-ramadhan/matplotloom/actions/workflows/sphinx.yml">
+    <img alt="Docs" src="https://github.com/ali-ramadhan/matplotloom/actions/workflows/testing.yml/badge.svg">
   </a>
 </p>
 
