@@ -96,6 +96,7 @@ class Loom:
         plt.close(fig)
 
     def save_video(self):
+        # Scale video in case number of pixels in either dimensions is odd.
         # See: https://github.com/ali-ramadhan/matplotloom/issues/1
         scale_filter = "scale='if(mod(iw,2),-2,iw)':'if(mod(ih,2),-2,ih)':flags=lanczos"
 
