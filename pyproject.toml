@@ -15,7 +15,6 @@ ipython = "^8.0.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
 sphinx = "^7.3.7"
-myst-parser = "^3.0.1"
 
 
 [tool.poetry.group.examples.dependencies]
