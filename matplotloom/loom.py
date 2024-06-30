@@ -35,26 +35,14 @@ class Loom:
         Whether to enable parallel frame saving. Default is False.
         When True, this enables a mode where frames can be saved concurrently,
         significantly speeding up the animation creation process for computationally
-        intensive plots or large numbers of frames. In parallel mode:
-        - The `save_frame` method requires an explicit frame number.
-        - Frames can be created and saved in any order.
-        - The user is responsible for parallelizing the frame creation process,
-          typically using tools like joblib, multiprocessing, or concurrent.futures.
-        - Example usage with joblib:
-        ```python
-        from joblib import Parallel, delayed
+        intensive plots or large numbers of frames.
         
-        def create_frame(frame_number, ...):
-            fig, ax = plt.subplots()
-            # ... create your plot ...
-            loom.save_frame(fig, frame_number)
-        
-        with Loom("output.mp4", parallel=True) as loom:
-            Parallel(n_jobs=-1)(
-                delayed(create_frame)(i, ...)
-                for i in range(num_frames)
-            )
-        ```
+        In parallel mode:
+            - The `save_frame` method requires an explicit frame number.
+            - Frames can be created and saved in any order.
+            - The user is responsible for parallelizing the frame creation process,
+              typically using tools like joblib, multiprocessing, or concurrent.futures.              
+    
     savefig_kwargs : dict, optional
         Additional keyword arguments to pass to matplotlib's savefig function. Default is {}.
 
