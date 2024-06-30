@@ -1,6 +1,25 @@
-# matplotloom
+<h1 align="center">
+  matplotloom
+</h1>
 
-Weave your frames into matplotlib animations!
+<p align="center">
+  <strong>Weave your frames into matplotlib animations!</strong>
+</p>
+
+<p align="center">
+  <a href="https://www.repostatus.org/#active">
+    <img alt="Repo status" src="https://www.repostatus.org/badges/latest/active.svg?style=flat-square" />
+  </a>
+  <a href="https://mit-license.org">
+    <img alt="MIT license" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square">
+  </a>
+  <a href="https://badge.fury.io/py/matplotloom">
+    <img alt="PyPI version" src="https://badge.fury.io/py/matplotloom.svg">
+  </a>
+  <a href="https://github.com/ali-ramadhan/matplotloom/actions/workflows/testing.yml">
+    <img alt="Testing" src="https://github.com/ali-ramadhan/matplotloom/actions/workflows/testing.yml/badge.svg">
+  </a>
+</p>
 
 ## Why use matplotloom?
 
