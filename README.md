@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <strong>Weave your frames into matplotlib animations!</strong>
+  <strong>🧵🧶🪡Weave your frames into matplotlib animations!</strong>
 </p>
 
 <p align="center">
