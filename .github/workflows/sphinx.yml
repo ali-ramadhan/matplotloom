@@ -3,7 +3,10 @@ name: Deploy docs
 on: push
 
 jobs:
-  build:
+  docs:
+    defaults:
+      run:
+        shell: bash
     runs-on: ubuntu-latest
     permissions:
       contents: write
