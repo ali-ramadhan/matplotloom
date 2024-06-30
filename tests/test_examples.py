@@ -1,14 +1,19 @@
+import datetime
 import pytest
 
 import numpy as np
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
 
 from pathlib import Path
 from cmocean import cm
+
+from cartopy.feature.nightshade import Nightshade
+from joblib import Parallel, delayed
 from scipy.integrate import solve_ivp
 from scipy.special import j0
-from joblib import Parallel, delayed
 from tqdm import tqdm
+
 from matplotloom import Loom
 
 def test_sine_wave():
@@ -26,7 +31,29 @@ def test_sine_wave():
 
     assert Path("sine_wave.gif").is_file()
     assert Path("sine_wave.gif").stat().st_size > 0
-    
+
+def test_parallel_sine_wave():
+    def plot_frame(phase, frame_number, loom):
+        fig, ax = plt.subplots()
+
+        x = np.linspace(0, 2*np.pi, 200)
+        y = np.sin(x + phase)
+        
+        ax.plot(x, y)
+        ax.set_xlim(0, 2*np.pi)
+        
+        loom.save_frame(fig, frame_number)
+
+    with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
+        phases = np.linspace(0, 2*np.pi, 10)
+        
+        Parallel(n_jobs=-1)(
+            delayed(plot_frame)(phase, i, loom) 
+            for i, phase in enumerate(phases)
+        )
+
+    assert Path("parallel_sine_wave.gif").is_file()
+    assert Path("parallel_sine_wave.gif").stat().st_size > 0
 
 def test_rotating_circular_sine_wave():
     with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
@@ -180,25 +207,49 @@ def test_double_pendulum():
     assert Path("double_pendulum.mp4").is_file()
     assert Path("double_pendulum.mp4").stat().st_size > 0
 
-def test_parallel_sine_wave():
-    def plot_frame(phase, frame_number, loom):
-        fig, ax = plt.subplots()
+def test_night_time_shading():
+    def plot_frame(day_of_year, loom, frame_number):
+        date = datetime.datetime(2024, 1, 1, 12) + datetime.timedelta(days=day_of_year-1)
 
-        x = np.linspace(0, 2*np.pi, 200)
-        y = np.sin(x + phase)
+        fig = plt.figure(figsize=(15, 5))
+
+        proj1 = ccrs.Orthographic(central_longitude=0, central_latitude=30)
+        proj2 = ccrs.Orthographic(central_longitude=120, central_latitude=0)
+        proj3 = ccrs.Orthographic(central_longitude=240, central_latitude=-30)
+
+        ax1 = fig.add_subplot(1, 3, 1, projection=proj1)
+        ax2 = fig.add_subplot(1, 3, 2, projection=proj2)
+        ax3 = fig.add_subplot(1, 3, 3, projection=proj3)
+
+        fig.suptitle(f"Night time shading for {date} UTC")
         
-        ax.plot(x, y)
-        ax.set_xlim(0, 2*np.pi)
-        
+        ax1.stock_img()
+        ax1.add_feature(Nightshade(date, alpha=0.2))
+
+        ax2.stock_img()
+        ax2.add_feature(Nightshade(date, alpha=0.2))
+
+        ax3.stock_img()
+        ax3.add_feature(Nightshade(date, alpha=0.2))
+
         loom.save_frame(fig, frame_number)
 
-    with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
-        phases = np.linspace(0, 2*np.pi, 10)
+    loom = Loom(
+        "night_time_shading.mp4",
+        fps = 10,
+        verbose = True,
+        overwrite = True,
+        parallel = True
+    )
+
+    with loom:
+        n_days_to_test = 5
+        days_of_year = range(1, n_days_to_test + 1)
         
         Parallel(n_jobs=-1)(
-            delayed(plot_frame)(phase, i, loom) 
-            for i, phase in enumerate(phases)
-        )
+            delayed(plot_frame)(day_of_year, loom, i)
+            for i, day_of_year in enumerate(days_of_year)
+    )
 
-    assert Path("parallel_sine_wave.gif").is_file()
-    assert Path("parallel_sine_wave.gif").stat().st_size > 0
+    assert Path("night_time_shading.mp4").is_file()
+    assert Path("night_time_shading.mp4").stat().st_size > 0

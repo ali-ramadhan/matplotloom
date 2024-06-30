@@ -25,6 +25,7 @@ scipy = [
     {version = "^1.14.0", python = "^3.10"}
 ]
 tqdm = "^4.66.4"
+cartopy = "^0.23.0"
 
 [build-system]
 requires = ["poetry-core"]
