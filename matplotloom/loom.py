@@ -232,13 +232,19 @@ class Loom:
                 if frame_filename.exists():
                     frame_filename.unlink()
 
-    def show(self) -> Union[Video, Image]:
+    def show(self, **kwargs) -> Union[Video, Image]:
         """
         Display the created animation in a Jupyter notebook.
 
         This method returns an IPython display object that can be used to show
         the animation directly in a Jupyter notebook cell. The type of object
         returned depends on the file format of the animation.
+
+        Parameters
+        ----------
+        **kwargs
+            Keyword arguments that will be passed to either IPython.display.Video
+            or IPython.display.Image constructor depending on the file format.
 
         Returns
         -------
@@ -256,8 +262,8 @@ class Loom:
         method before calling this method.
         """
         if self.file_format in {"mp4", "mkv"}:
-            return Video(str(self.output_filepath))
+            return Video(self.output_filepath, **kwargs)
         elif self.file_format in {"gif", "apng"}:
-            return Image(str(self.output_filepath))
+            return Image(self.output_filepath, **kwargs)
         else:
             raise ValueError(f"Unsupported file format: {self.file_format}")
