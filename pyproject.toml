@@ -1,6 +1,6 @@
 [project]
 name = "matplotloom"
-version = "0.7.1"
+version = "0.8.0"
 description = "Weave your frames into matplotlib animations."
 authors = [
     { name = "ali-ramadhan", email = "ali.hh.ramadhan@gmail.com" }
