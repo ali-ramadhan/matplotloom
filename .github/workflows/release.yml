@@ -9,18 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.11
-      - uses: snok/install-poetry@v1.3.2
-      - name: Install dependencies
-        run: poetry install
+          python-version: "3.13"
+
+      - name: Install the project
+        run: uv sync --locked --all-groups --dev
+
       - uses: FedericoCarboni/setup-ffmpeg@v3
         with:
           ffmpeg-version: release
           github-token: ${{ github.server_url == 'https://github.com' && github.token || '' }}
+
       - name: Run tests
-        run: poetry run pytest -v
-      - run: poetry config pypi-token.pypi "${{ secrets.PYPI_API_KEY }}"
-      - name: Publish package
-        run: poetry publish --build
+        run: uv run pytest -v
+
+      - name: Build and publish package
+        run: uv publish --token "${{ secrets.PYPI_API_KEY }}"

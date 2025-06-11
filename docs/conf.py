@@ -1,8 +1,9 @@
 import os
 import sys
+from datetime import datetime
 
-# Add loom.py to path.
-sys.path.insert(0, os.path.abspath("../.."))
+# Add matplotloom package to path.
+sys.path.insert(0, os.path.abspath(".."))
 
 import matplotloom
 
@@ -15,7 +16,7 @@ import matplotloom
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "matplotloom"
-copyright = "2024, Ali Ramadhan"
+copyright = f"2024-{datetime.now().year}, Ali Ramadhan"
 author = "Ali Ramadhan"
 version = matplotloom.__version__
 release = matplotloom.__version__

@@ -35,6 +35,12 @@ matplotloom is published on PyPI so you can install matplotloom via `pip`
 pip install matplotloom
 ```
 
+or `uv`
+
+```bash
+uv add matplotloom
+```
+
 or `poetry`
 
 ```bash
@@ -47,7 +53,7 @@ or `conda`
 conda install matplotloom
 ```
 
-matplotloom requires Python 3.9+ and is continuously tested on Linux, Windows, and Mac. Ensure you have `ffmpeg` installed so that animations can be generated.
+matplotloom requires Python 3.10+ and is continuously tested on Linux, Windows, and Mac. Ensure you have `ffmpeg` installed so that animations can be generated.
 
 ## Why use matplotloom?
 
@@ -81,10 +87,10 @@ with Loom("sine_wave_animation.gif", fps=30) as loom:
 
         x = np.linspace(0, 2*np.pi, 200)
         y = np.sin(x + phase)
-        
+
         ax.plot(x, y)
         ax.set_xlim(0, 2*np.pi)
-        
+
         loom.save_frame(fig)
 ```
 
@@ -100,15 +106,15 @@ from matplotloom import Loom
 with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
     for i in range(36):
         fig, ax = plt.subplots(figsize=(12, 8), subplot_kw={"projection": "3d"})
-        
+
         X = np.arange(-5, 5, 0.25)
         Y = np.arange(-5, 5, 0.25)
         X, Y = np.meshgrid(X, Y)
         R = np.sqrt(X**2 + Y**2)
         Z = np.sin(R)
-        
+
         surf = ax.plot_surface(X, Y, Z, cmap="coolwarm")
-        
+
         ax.view_init(azim=i*10)
         ax.set_zlim(-1.01, 1.01)
         fig.colorbar(surf, shrink=0.5, aspect=5)
@@ -134,10 +140,10 @@ def bessel_wave(r, t, k, omega, A):
 
 def create_frame(x, y, t):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-    
+
     r = np.sqrt(x**2 + y**2)
     z = bessel_wave(r, t, k=2, omega=1, A=1)
-    
+
     pcm = ax1.pcolormesh(x, y, z, cmap=cm.balance, shading='auto', vmin=-1, vmax=1)
     fig.colorbar(pcm, ax=ax1)
 
@@ -147,16 +153,16 @@ def create_frame(x, y, t):
     ax1.set_xlim(-10, 10)
     ax1.set_ylim(-10, 10)
     ax1.set_aspect("equal", adjustable="box")
-    
+
     mid = z.shape[0] // 2
     ax2.plot(x[mid], z[mid])
-    
+
     ax2.set_xlim(x.min(), x.max())
     ax2.set_ylim(-1.1, 1.1)
     ax2.set_title("Cross-section at y = 0")
     ax2.set_xlabel("x")
     ax2.set_ylabel("z")
-    
+
     return fig
 
 loom = Loom(
@@ -202,10 +208,10 @@ m1, m2 = 1, 1  # pendulum masses [kg]
 def derivatives(t, state):
     θ1, ω1, θ2, ω2 = state
     dydt = np.zeros_like(state)
-    
+
     dydt[0] = ω1
     dydt[2] = ω2
-    
+
     Δθ = θ2 - θ1
 
     denominator1 = (m1 + m2) * l1 - m2 * l1 * np.cos(Δθ)**2
@@ -219,7 +225,7 @@ def derivatives(t, state):
                + (m1 + m2) * g * np.sin(θ1) * np.cos(Δθ)
                - (m1 + m2) * l1 * ω1**2 * np.sin(Δθ)
                - (m1 + m2) * g * np.sin(θ2)) / denominator2
-    
+
     return dydt
 
 t_span = (0, 20)
@@ -244,7 +250,7 @@ loom = Loom(
 with loom:
     for i, t in tqdm(enumerate(times), total=len(times)):
         fig, ax = plt.subplots(figsize=(8, 8))
-        
+
         ax.plot(
             [0, x1[i], x2[i]],
             [0, y1[i], y2[i]],
@@ -262,9 +268,9 @@ with loom:
             color = "red",
             alpha = 0.5
         )
-        
+
         ax.set_title(f"Double Pendulum: t = {t:.3f}s")
-        
+
         ax.set_xlim(-2.2, 2.2)
         ax.set_ylim(-2.2, 2.2)
         ax.set_aspect("equal", adjustable="box")
@@ -302,7 +308,7 @@ def plot_frame(day_of_year, loom, frame_number):
     ax3 = fig.add_subplot(1, 3, 3, projection=proj3)
 
     fig.suptitle(f"Night time shading for {date} UTC")
-    
+
     ax1.stock_img()
     ax1.add_feature(Nightshade(date, alpha=0.2))
 
@@ -328,7 +334,7 @@ loom = Loom(
 with loom:
     n_days_2024 = 366
     days_of_year = range(1, n_days_2024 + 1)
-    
+
     Parallel(n_jobs=-1)(
         delayed(plot_frame)(day_of_year, loom, i)
         for i, day_of_year in enumerate(days_of_year)
@@ -352,17 +358,17 @@ def plot_frame(phase, frame_number, loom):
 
     x = np.linspace(0, 2*np.pi, 200)
     y = np.sin(x + phase)
-    
+
     ax.plot(x, y)
     ax.set_xlim(0, 2*np.pi)
-    
+
     loom.save_frame(fig, frame_number)
 
 with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
     phases = np.linspace(0, 2*np.pi, 100)
-    
+
     Parallel(n_jobs=-1)(
-        delayed(plot_frame)(phase, i, loom) 
+        delayed(plot_frame)(phase, i, loom)
         for i, phase in enumerate(phases)
     )
 ```

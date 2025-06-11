@@ -36,13 +36,13 @@ class Loom:
         When True, this enables a mode where frames can be saved concurrently,
         significantly speeding up the animation creation process for computationally
         intensive plots or large numbers of frames.
-        
+
         In parallel mode:
             - The `save_frame` method requires an explicit frame number.
             - Frames can be created and saved in any order.
             - The user is responsible for parallelizing the frame creation process,
-              typically using tools like joblib, multiprocessing, or concurrent.futures.              
-    
+              typically using tools like joblib, multiprocessing, or concurrent.futures.
+
     savefig_kwargs : dict, optional
         Additional keyword arguments to pass to matplotlib's savefig function. Default is {}.
 
@@ -93,7 +93,7 @@ class Loom:
         if self.verbose:
             print(f"output_filepath: {self.output_filepath}")
             print(f"frames_directory: {self.frames_directory}")
-    
+
     def __enter__(self) -> 'Loom':
         """
         Enter the runtime context related to this object.
@@ -107,8 +107,8 @@ class Loom:
 
     def __exit__(
             self,
-            exc_type: Optional[Type[BaseException]], 
-            exc_value: Optional[BaseException], 
+            exc_type: Optional[Type[BaseException]],
+            exc_value: Optional[BaseException],
             traceback: Optional[TracebackType]
         ) -> bool:
         """
@@ -143,12 +143,12 @@ class Loom:
                 for frame_filepath in self.frame_filepaths:
                     if frame_filepath.exists():
                         frame_filepath.unlink()
-            
+
             if self._temp_dir:
                 self._temp_dir.cleanup()
 
         return False  # Propagate the exception if there was one
-    
+
     def save_frame(
             self,
             fig: Figure,
@@ -172,15 +172,15 @@ class Loom:
             self.frame_counter += 1
         else:
             frame_filepath = self.frames_directory / f"frame_{frame_number:06d}.png"
-        
+
         self.frame_filepaths.append(frame_filepath)
-        
+
         if self.verbose:
             if not self.parallel:
                 print(f"Saving frame {self.frame_counter - 1} to {frame_filepath}")
             else:
                 print(f"Saving frame {frame_number} to {frame_filepath}")
-        
+
         fig.savefig(frame_filepath, **self.savefig_kwargs)
         plt.close(fig)
 
@@ -202,7 +202,7 @@ class Loom:
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
                 "-vf", scale_filter,
-                "-c:v", "libx264", 
+                "-c:v", "libx264",
                 "-pix_fmt", "yuv420p",
                 str(self.output_filepath)
             ]
@@ -217,7 +217,7 @@ class Loom:
                 "-vf", f"{scale_filter},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                 str(self.output_filepath)
             ]
-        
+
         PIPE = subprocess.PIPE
         process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         stdout, stderr = process.communicate()

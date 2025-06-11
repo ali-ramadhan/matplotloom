@@ -10,19 +10,24 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.11
-      - uses: snok/install-poetry@v1.3.4
-      - name: Install dependencies
-        run: poetry install
+          python-version: "3.13"
+
+      - name: Install the project
+        run: uv sync --locked --all-groups --dev
+
       - name: Build docs
-        run: poetry run sphinx-build -M html docs/ docs/build/
+        run: uv run sphinx-build -M html docs/ docs/build/
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: html-docs
           path: docs/build/html/
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
