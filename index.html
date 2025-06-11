@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Matplotloom 0.7.1 &#8212; matplotloom 0.7.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
     <script src="_static/documentation_options.js?v=5a057da9"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -77,6 +78,10 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>matplotloom
 </pre></div>
 </div>
+<p>or <cite>uv</cite></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>add<span class="w"> </span>matplotloom
+</pre></div>
+</div>
 <p>or <code class="docutils literal notranslate"><span class="pre">poetry</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>add<span class="w"> </span>matplotloom
 </pre></div>
@@ -85,15 +90,15 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>matplotloom
 </pre></div>
 </div>
-<p>matplotloom requires Python 3.9+ and is continuously tested on Linux, Windows, and Mac. Ensure you have <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> installed so that animations can be generated.</p>
+<p>matplotloom requires Python 3.10+ and is continuously tested on Linux, Windows, and Mac. Ensure you have <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> installed so that animations can be generated.</p>
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <section id="sine-wave">
 <h3><a class="toc-backref" href="#id6" role="doc-backlink">Sine wave</a><a class="headerlink" href="#sine-wave" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotloom</span> <span class="kn">import</span> <span class="n">Loom</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotloom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Loom</span>
 
 <span class="k">with</span> <span class="n">Loom</span><span class="p">(</span><span class="s2">&quot;sine_wave_animation.gif&quot;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span> <span class="k">as</span> <span class="n">loom</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
@@ -112,9 +117,9 @@
 </section>
 <section id="rotating-circular-sine-wave">
 <h3><a class="toc-backref" href="#id7" role="doc-backlink">Rotating circular sine wave</a><a class="headerlink" href="#rotating-circular-sine-wave" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotloom</span> <span class="kn">import</span> <span class="n">Loom</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotloom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Loom</span>
 
 <span class="k">with</span> <span class="n">Loom</span><span class="p">(</span><span class="s2">&quot;rotating_circular_sine_wave.mp4&quot;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">loom</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">36</span><span class="p">):</span>
@@ -141,16 +146,16 @@
 <section id="bessel-wave">
 <h3><a class="toc-backref" href="#id8" role="doc-backlink">Bessel wave</a><a class="headerlink" href="#bessel-wave" title="Link to this heading">¶</a></h3>
 <p>Compare with <a class="reference external" href="https://github.com/t-makaro/animatplot">animatplot</a>’s <a class="reference external" href="https://github.com/t-makaro/animatplot/blob/master/docs/source/tutorial/blocks.ipynb">blocks example</a>. With matplotloom you just use regular matplotlib abstractions.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">j0</span>
-<span class="kn">from</span> <span class="nn">cmocean</span> <span class="kn">import</span> <span class="n">cm</span>
-<span class="kn">from</span> <span class="nn">matplotloom</span> <span class="kn">import</span> <span class="n">Loom</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">j0</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cmocean</span><span class="w"> </span><span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotloom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Loom</span>
 
-<span class="k">def</span> <span class="nf">bessel_wave</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bessel_wave</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">j0</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">r</span> <span class="o">-</span> <span class="n">omega</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">create_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_frame</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
     <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
     <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -204,19 +209,19 @@
 <section id="double-pendulum">
 <h3><a class="toc-backref" href="#id9" role="doc-backlink">Double pendulum</a><a class="headerlink" href="#double-pendulum" title="Link to this heading">¶</a></h3>
 <p>Compare with <a class="reference external" href="https://matplotlib.org/stable/gallery/animation/double_pendulum.html#sphx-glr-gallery-animation-double-pendulum-py">matplotlib’s double pendulum</a> example.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">matplotloom</span> <span class="kn">import</span> <span class="n">Loom</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotloom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Loom</span>
 
 <span class="n">g</span> <span class="o">=</span> <span class="mf">9.80665</span> <span class="c1"># standard acceleration of gravity [m/s²]</span>
 <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>  <span class="c1"># pendulum arms lengths [m]</span>
 <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>  <span class="c1"># pendulum masses [kg]</span>
 
 <span class="c1"># Calculate dy/dt where y = [θ1, ω1, θ2, ω2].</span>
-<span class="k">def</span> <span class="nf">derivatives</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">derivatives</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
     <span class="n">θ1</span><span class="p">,</span> <span class="n">ω1</span><span class="p">,</span> <span class="n">θ2</span><span class="p">,</span> <span class="n">ω2</span> <span class="o">=</span> <span class="n">state</span>
     <span class="n">dydt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
@@ -295,16 +300,16 @@
 <section id="night-time-shading">
 <h3><a class="toc-backref" href="#id10" role="doc-backlink">Night time shading</a><a class="headerlink" href="#night-time-shading" title="Link to this heading">¶</a></h3>
 <p>matplotloom works out of the box with anything that is built on top of matplotlib. Here we’re extending a <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/gallery/lines_and_polygons/nightshade.html#sphx-glr-gallery-lines-and-polygons-nightshade-py">Cartopy example</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cartopy.crs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ccrs</span>
 
-<span class="kn">from</span> <span class="nn">cartopy.feature.nightshade</span> <span class="kn">import</span> <span class="n">Nightshade</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
-<span class="kn">from</span> <span class="nn">matplotloom</span> <span class="kn">import</span> <span class="n">Loom</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cartopy.feature.nightshade</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nightshade</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotloom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Loom</span>
 
-<span class="k">def</span> <span class="nf">plot_frame</span><span class="p">(</span><span class="n">day_of_year</span><span class="p">,</span> <span class="n">loom</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_frame</span><span class="p">(</span><span class="n">day_of_year</span><span class="p">,</span> <span class="n">loom</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">):</span>
     <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">day_of_year</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -358,12 +363,12 @@
 <section id="id1">
 <h2><a class="toc-backref" href="#id11" role="doc-backlink">Looming in parallel</a><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>By passing <code class="docutils literal notranslate"><span class="pre">parallel=True</span></code> when creating a <code class="docutils literal notranslate"><span class="pre">Loom</span></code>, you can save frames using <code class="docutils literal notranslate"><span class="pre">loom.save_frame(fig,</span> <span class="pre">frame_number)</span></code> which allows you to plot and save all your frames in parallel. One easy way to leverage this is by using joblib to parallelize the for loop. For example, here’s how you can parallelize the simple sine wave example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotloom</span> <span class="kn">import</span> <span class="n">Loom</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotloom</span><span class="w"> </span><span class="kn">import</span> <span class="n">Loom</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 
-<span class="k">def</span> <span class="nf">plot_frame</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">,</span> <span class="n">loom</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_frame</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">,</span> <span class="n">loom</span><span class="p">):</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
@@ -388,7 +393,7 @@
 <h2><a class="toc-backref" href="#id12" role="doc-backlink">Reference</a><a class="headerlink" href="#reference" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="matplotloom.Loom">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matplotloom.</span></span><span class="sig-name descname"><span class="pre">Loom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matplotloom.Loom" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">matplotloom.</span></span><span class="sig-name descname"><span class="pre">Loom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefig_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matplotloom.Loom" title="Link to this definition">¶</a></dt>
 <dd><p>A class for creating animations from matplotlib figures.</p>
 <p>This class provides functionality to save individual frames and compile them into
 an animation (video or GIF) using ffmpeg.</p>
@@ -484,11 +489,11 @@ method before calling this method.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2024, Ali Ramadhan.
+      &#169;2024-2025, Ali Ramadhan.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="_sources/index.rst.txt"
