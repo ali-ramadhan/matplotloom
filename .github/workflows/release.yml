@@ -26,5 +26,8 @@ jobs:
       - name: Run tests
         run: uv run pytest -v
 
-      - name: Build and publish package
+      - name: Build package
+        run: uv build
+
+      - name: Publish package
         run: uv publish --token "${{ secrets.PYPI_API_KEY }}"
