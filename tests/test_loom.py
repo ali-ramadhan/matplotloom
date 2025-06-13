@@ -16,7 +16,7 @@ def test_init_loom(tmp_path):
 def test_init_loom_with_custom_frames_directory(tmp_path):
     output_filepath = tmp_path / "output.gif"
     custom_frames_dir = tmp_path / "frames"
-    
+
     loom_with_custom_dir = Loom(
         output_filepath=output_filepath,
         frames_directory=custom_frames_dir,
@@ -29,11 +29,11 @@ def test_init_loom_with_custom_frames_directory(tmp_path):
 def test_save_frame(tmp_path):
     output_filepath = tmp_path / "output.mp4"
     loom = Loom(output_filepath=output_filepath, verbose=True)
-    
+
     fig = Figure()
     ax = fig.subplots()
     ax.plot([0, 1], [0, 1])
-    
+
     loom.save_frame(fig)
     assert len(loom.frame_filepaths) == 1
     assert loom.frame_filepaths[0].exists()
@@ -41,7 +41,7 @@ def test_save_frame(tmp_path):
 def test_video_creation(tmp_path):
     output_filepath = tmp_path / "output.mp4"
     loom = Loom(output_filepath=output_filepath, verbose=True)
-    
+
     fig = Figure()
     ax = fig.subplots()
     ax.plot([0, 1], [0, 1])
@@ -57,7 +57,7 @@ def test_dont_keep_frames(tmp_path):
         keep_frames=False,
         verbose=True
     )
-    
+
     fig = Figure()
     ax = fig.subplots()
     ax.plot([0, 1], [0, 1])
@@ -128,3 +128,38 @@ def test_loom_error_handling(tmp_path):
 
     frames_dir = Path(loom.frames_directory)
     assert not any(frames_dir.glob("frame_*.png"))
+
+def test_show_ffmpeg_output(tmp_path):
+    output_filepath = tmp_path / "output.mp4"
+
+    loom = Loom(
+        output_filepath=output_filepath,
+        show_ffmpeg_output=True,
+        verbose=False
+    )
+
+    assert loom.show_ffmpeg_output is True
+    assert loom.verbose is False
+
+    fig = Figure()
+    ax = fig.subplots()
+    ax.plot([0, 1], [0, 1])
+
+    loom.save_frame(fig)
+    loom.save_video()
+
+    assert loom.output_filepath.exists()
+
+    output_filepath2 = tmp_path / "output2.mp4"
+    loom2 = Loom(output_filepath=output_filepath2)
+
+    assert loom2.show_ffmpeg_output is False
+
+    fig2 = Figure()
+    ax2 = fig2.subplots()
+    ax2.plot([1, 2], [1, 2])
+
+    loom2.save_frame(fig2)
+    loom2.save_video()
+
+    assert loom2.output_filepath.exists()

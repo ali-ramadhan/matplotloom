@@ -43,6 +43,10 @@ class Loom:
             - The user is responsible for parallelizing the frame creation process,
               typically using tools like joblib, multiprocessing, or concurrent.futures.
 
+    show_ffmpeg_output : bool, optional
+        Whether to show ffmpeg output when saving the video. Default is False.
+        When True, the ffmpeg command and its stdout/stderr output will be printed
+        during video creation, regardless of the verbose setting.
     savefig_kwargs : dict, optional
         Additional keyword arguments to pass to matplotlib's savefig function. Default is {}.
 
@@ -60,6 +64,7 @@ class Loom:
         overwrite: bool = False,
         verbose: bool = False,
         parallel: bool = False,
+        show_ffmpeg_output: bool = False,
         savefig_kwargs: Optional[Dict[str, Any]] = None
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
@@ -68,6 +73,7 @@ class Loom:
         self.overwrite: bool = overwrite
         self.verbose: bool = verbose
         self.parallel: bool = parallel
+        self.show_ffmpeg_output: bool = show_ffmpeg_output
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
 
         if self.output_filepath.exists() and not self.overwrite:
@@ -222,7 +228,7 @@ class Loom:
         process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
         stdout, stderr = process.communicate()
 
-        if self.verbose:
+        if self.verbose or self.show_ffmpeg_output:
             print(" ".join(command))
             print(stdout.decode())
             print(stderr.decode())
