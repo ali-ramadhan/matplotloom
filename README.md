@@ -53,7 +53,9 @@ or `conda`
 conda install matplotloom
 ```
 
-matplotloom requires Python 3.10+ and is continuously tested on Linux, Windows, and Mac. Ensure you have `ffmpeg` installed so that animations can be generated.
+matplotloom is continuously tested with Python 3.10+ on Linux, Windows, and Mac.
+
+You will need to have `ffmpeg` installed so that animations can be generated.
 
 ## Why use matplotloom?
 
