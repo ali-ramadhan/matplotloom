@@ -165,15 +165,20 @@ def test_show_ffmpeg_output(tmp_path):
 
     assert loom2.output_filepath.exists()
 
-def test_odd_pixel_dimensions(tmp_path):
-    """Test that Loom can handle odd pixel dimensions properly."""
-    output_filepath = tmp_path / "output_odd_dimensions.mp4"
+@pytest.mark.parametrize("odd_handling", ["round_up", "round_down", "crop", "pad"])
+def test_odd_pixel_dimensions(tmp_path, odd_handling):
+    """
+    Test that Loom can handle odd pixel dimensions properly with different handling
+    options.
+    """
+    output_filepath = tmp_path / f"output_odd_{odd_handling}.mp4"
 
     loom = Loom(
         output_filepath=output_filepath,
         show_ffmpeg_output=True,
         verbose=True,
         keep_frames=True,  # Keep frames so we can verify their dimensions
+        odd_dimension_handling=odd_handling,
         savefig_kwargs={
             "dpi": 100,
             "bbox_inches": None,  # Don't crop, keep exact dimensions
@@ -190,7 +195,7 @@ def test_odd_pixel_dimensions(tmp_path):
         y = [i*0.5, 1+i*0.2, 0.5+i*0.3, i*0.4]
 
         ax.plot(x, y, "b-o")
-        ax.set_title(f"Frame {i} - Odd dimensions test")
+        ax.set_title(f"Frame {i} - odd_dimension_handling={odd_handling} test")
         ax.set_xlim(0, 3)
         ax.set_ylim(0, 3)
 
@@ -198,6 +203,7 @@ def test_odd_pixel_dimensions(tmp_path):
 
         loom.save_frame(fig)
 
+    # Verify frame dimensions are still 401x301 (handling is done during video creation)
     for frame_path in loom.frame_filepaths:
         with Image.open(frame_path) as img:
             width, height = img.size
@@ -207,12 +213,58 @@ def test_odd_pixel_dimensions(tmp_path):
 
     loom.save_video()
 
+    # All handling options should create a valid video
     video_created = output_filepath.exists()
     if video_created:
         file_size = output_filepath.stat().st_size
         if file_size == 0:
-            pytest.fail("Video file was created but is empty - ffmpeg likely failed due to odd dimensions")
+            pytest.fail(f"Video file was created but is empty with {odd_handling} handling")
     else:
-        pytest.fail("Video file was not created - ffmpeg failed due to odd dimensions")
+        pytest.fail(f"Video file was not created with {odd_handling} handling")
 
-    assert video_created and file_size > 0, "Video should be created successfully despite odd pixel dimensions"
+    assert video_created and file_size > 0, f"Video should be created successfully with {odd_handling} handling"
+
+
+def test_odd_dimension_handling_none_fails(tmp_path):
+    """Test that 'none' handling fails with H.264 codec and odd dimensions."""
+    output_filepath = tmp_path / "output_odd_none.mp4"
+
+    loom = Loom(
+        output_filepath=output_filepath,
+        show_ffmpeg_output=True,
+        verbose=True,
+        keep_frames=True,
+        odd_dimension_handling="none",
+        savefig_kwargs={
+            "dpi": 100,
+            "bbox_inches": None,
+            "pad_inches": 0
+        }
+    )
+
+    # Create figure with odd dimensions
+    fig = Figure(figsize=(4.01, 3.01), dpi=100)
+    ax = fig.subplots()
+    ax.plot([0, 1, 2, 3], [0, 1, 0.5, 0.4], "b-o")
+    ax.set_title("Frame - none handling test")
+    fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    loom.save_frame(fig)
+
+    loom.save_video()
+
+    # With 'none' handling, the video should fail to be created or be empty
+    video_created = output_filepath.exists()
+    if video_created:
+        file_size = output_filepath.stat().st_size
+        # File might be created but empty due to ffmpeg failure
+        assert file_size == 0, "Video with 'none' handling should fail due to odd dimensions"
+    # If no file is created, that's also expected behavior
+
+
+def test_odd_dimension_handling_validation():
+    """Test that invalid odd_dimension_handling values raise ValueError."""
+    with pytest.raises(ValueError, match="odd_dimension_handling must be one of"):
+        Loom(
+            output_filepath="test.mp4",
+            odd_dimension_handling="invalid_option"
+        )
