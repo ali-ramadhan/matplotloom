@@ -30,10 +30,8 @@ jobs:
       - name: Install the project
         run: uv sync --locked --all-groups --dev
 
-      - uses: FedericoCarboni/setup-ffmpeg@v3
-        with:
-          ffmpeg-version: release
-          github-token: ${{ github.server_url == 'https://github.com' && github.token || '' }}
+      - name: Setup FFmpeg
+        uses: AnimMouse/setup-ffmpeg@v1
 
       - name: Run tests
         run: uv run pytest -vv --durations=0
