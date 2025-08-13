@@ -1,4 +1,6 @@
 import subprocess
+import re
+import threading
 
 from pathlib import Path
 from typing import Union, Optional, Dict, Type, List, Any
@@ -9,6 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 from IPython.display import Video, Image
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn, TimeRemainingColumn
+from rich.console import Console
 
 class Loom:
     """
@@ -59,6 +63,9 @@ class Loom:
         Whether to show ffmpeg output when saving the video. Default is False.
         When True, the ffmpeg command and its stdout/stderr output will be printed
         during video creation, regardless of the verbose setting.
+    show_progress : bool, optional
+        Whether to show a rich progress bar during ffmpeg encoding. Default is True.
+        When True, displays a visual progress bar with encoding statistics.
 
     Raises
     ------
@@ -77,6 +84,7 @@ class Loom:
         savefig_kwargs: Optional[Dict[str, Any]] = None,
         verbose: bool = False,
         show_ffmpeg_output: bool = False,
+        show_progress: bool = True,
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
         self.fps: int = fps
@@ -85,6 +93,7 @@ class Loom:
         self.verbose: bool = verbose
         self.parallel: bool = parallel
         self.show_ffmpeg_output: bool = show_ffmpeg_output
+        self.show_progress: bool = show_progress
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
 
         valid_odd_options = {"round_up", "round_down", "crop", "pad", "none"}
@@ -232,6 +241,89 @@ class Loom:
         elif self.odd_dimension_handling == "pad":
             return "pad='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':0:0:color=white"
 
+    def _parse_ffmpeg_output(self, line: str) -> Optional[Dict[str, Union[int, float]]]:
+        """
+        Parse ffmpeg progress output line to extract frame and time information.
+        
+        Parameters
+        ----------
+        line : str
+            A line of ffmpeg stderr output
+            
+        Returns
+        -------
+        Optional[Dict[str, Union[int, float]]]
+            Dictionary containing frame, time, fps, and speed if found, None otherwise
+        """
+        # FFmpeg progress info appears in lines like:
+        # frame= 123 fps= 45 q=28.0 size=   123kB time=00:00:04.10 bitrate= 245.2kbits/s speed=1.23x
+        frame_match = re.search(r'frame=\s*(\d+)', line)
+        time_match = re.search(r'time=(\d{2}):(\d{2}):(\d{2})\.(\d{2})', line)
+        fps_match = re.search(r'fps=\s*([\d.]+)', line)
+        speed_match = re.search(r'speed=\s*([\d.]+)x', line)
+        
+        if frame_match:
+            result = {'frame': int(frame_match.group(1))}
+            
+            if time_match:
+                hours = int(time_match.group(1))
+                minutes = int(time_match.group(2))
+                seconds = int(time_match.group(3))
+                centiseconds = int(time_match.group(4))
+                total_seconds = hours * 3600 + minutes * 60 + seconds + centiseconds / 100
+                result['time'] = total_seconds
+                
+            if fps_match:
+                result['fps'] = float(fps_match.group(1))
+                
+            if speed_match:
+                result['speed'] = float(speed_match.group(1))
+                
+            return result
+        
+        return None
+
+    def _monitor_ffmpeg_progress(self, process: subprocess.Popen, progress: Progress, task_id) -> None:
+        """
+        Monitor ffmpeg process stderr output and update progress bar.
+        
+        Parameters
+        ----------
+        process : subprocess.Popen
+            The ffmpeg process to monitor
+        progress : Progress
+            Rich progress bar instance
+        task_id
+            Task ID for the progress bar
+        """        
+        while True:
+            line = process.stderr.readline()
+            if not line:
+                break
+                
+            line_str = line.decode('utf-8', errors='ignore').strip()
+            
+            # Parse the progress information
+            progress_info = self._parse_ffmpeg_output(line_str)
+            if progress_info:
+                current_frame = progress_info['frame']
+                
+                # Update progress bar
+                progress.update(
+                    task_id, 
+                    completed=current_frame,
+                    description=f"Encoding {self.file_format.upper()}"
+                )
+                
+                # Add additional info if available
+                if 'fps' in progress_info and 'speed' in progress_info:
+                    fps = progress_info['fps']
+                    speed = progress_info['speed']
+                    progress.update(
+                        task_id,
+                        description=f"Encoding {self.file_format.upper()} • {fps:.1f} fps • {speed:.1f}x speed"
+                    )
+
     def save_video(self) -> None:
         """
         Compile saved frames into a video or GIF using ffmpeg.
@@ -247,6 +339,7 @@ class Loom:
             command = [
                 "ffmpeg",
                 "-y",
+                "-progress", "pipe:2",  # Enable progress reporting to stderr
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
             ]
@@ -263,6 +356,7 @@ class Loom:
             command = [
                 "ffmpeg",
                 "-y",
+                "-progress", "pipe:2",  # Enable progress reporting to stderr
                 "-framerate", str(self.fps),
                 "-f", "image2",
                 "-i", str(self.frames_directory / "frame_%06d.png"),
@@ -276,14 +370,56 @@ class Loom:
 
             command.extend(["-vf", gif_filter, str(self.output_filepath)])
 
-        PIPE = subprocess.PIPE
-        process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        stdout, stderr = process.communicate()
-
         if self.verbose or self.show_ffmpeg_output:
             print(" ".join(command))
+
+        # Start ffmpeg process
+        PIPE = subprocess.PIPE
+        process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+
+        if self.show_progress:
+            # Use rich progress bar
+            total_frames = len(self.frame_filepaths)
+            
+            with Progress(
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                TaskProgressColumn(),
+                TimeRemainingColumn(),
+                console=Console()
+            ) as progress:
+                task_id = progress.add_task(
+                    f"Encoding {self.file_format.upper()}", 
+                    total=total_frames
+                )
+                
+                # Monitor progress in a separate thread
+                progress_thread = threading.Thread(
+                    target=self._monitor_ffmpeg_progress,
+                    args=(process, progress, task_id)
+                )
+                progress_thread.daemon = True
+                progress_thread.start()
+                
+                # Wait for process to complete
+                stdout, stderr = process.communicate()
+                progress_thread.join(timeout=1.0)  # Give thread a moment to finish
+                
+                # Ensure progress bar shows completion
+                progress.update(task_id, completed=total_frames)
+        else:
+            # No progress bar, just wait for completion
+            stdout, stderr = process.communicate()
+
+        if self.verbose or self.show_ffmpeg_output:
             print(stdout.decode())
             print(stderr.decode())
+
+        # Check for errors
+        if process.returncode != 0:
+            error_msg = stderr.decode() if stderr else "Unknown ffmpeg error"
+            raise RuntimeError(f"FFmpeg failed with return code {process.returncode}: {error_msg}")
 
         if not self.keep_frames:
             for frame_filename in self.frame_filepaths:

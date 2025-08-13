@@ -15,6 +15,7 @@ requires-python = ">=3.10"
 dependencies = [
     "ipython>=8.37.0",
     "matplotlib>=3.10.3",
+    "rich>=14.1.0",
 ]
 
 [dependency-groups]
