@@ -26,7 +26,8 @@ class Loom:
     fps : int, optional
         Frames per second for the output animation. Default is 30.
     keep_frames : bool, optional
-        Whether to keep individual frame files after creating the animation. Default is False.
+        Whether to keep individual frame files after creating the animation.
+        Default is False.
     overwrite : bool, optional
         Whether to overwrite the output file if it already exists. Default is False.
     verbose : bool, optional
@@ -48,7 +49,17 @@ class Loom:
         When True, the ffmpeg command and its stdout/stderr output will be printed
         during video creation, regardless of the verbose setting.
     savefig_kwargs : dict, optional
-        Additional keyword arguments to pass to matplotlib's savefig function. Default is {}.
+        Additional keyword arguments to pass to matplotlib's savefig function.
+        Default is {}.
+    odd_dimension_handling : str, optional
+        How to handle odd pixel dimensions that some codecs (like H.264) cannot process.
+        Options:
+        - "round_up": Scale filter rounds up to next even dimension (default)
+        - "round_down": Scale filter rounds down to previous even dimension
+        - "crop": Crop 1 pixel from bottom/right edges if dimensions are odd
+        - "pad": Add 1 pixel of padding to bottom/right edges if dimensions are odd
+        - "none": Do nothing, let FFmpeg handle it (may fail for some codecs)
+        Default is "round_up".
 
     Raises
     ------
@@ -65,7 +76,8 @@ class Loom:
         verbose: bool = False,
         parallel: bool = False,
         show_ffmpeg_output: bool = False,
-        savefig_kwargs: Optional[Dict[str, Any]] = None
+        savefig_kwargs: Optional[Dict[str, Any]] = None,
+        odd_dimension_handling: str = "round_up",
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
         self.fps: int = fps
@@ -76,8 +88,19 @@ class Loom:
         self.show_ffmpeg_output: bool = show_ffmpeg_output
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
 
+        valid_odd_options = {"round_up", "round_down", "crop", "pad", "none"}
+        if odd_dimension_handling not in valid_odd_options:
+            raise ValueError(
+                f"odd_dimension_handling must be one of {valid_odd_options}, "
+                f"got {odd_dimension_handling}"
+            )
+        self.odd_dimension_handling: str = odd_dimension_handling
+
         if self.output_filepath.exists() and not self.overwrite:
-            raise FileExistsError(f"Output file '{self.output_filepath}' already exists. Set `overwrite=True` to overwrite the file.")
+            raise FileExistsError(
+                f"Output file '{self.output_filepath}' already exists."
+                f"Set `overwrite=True` to overwrite the file."
+            )
 
         self._temp_dir: Optional[TemporaryDirectory] = None
         if frames_directory is None:
@@ -190,6 +213,26 @@ class Loom:
         fig.savefig(frame_filepath, **self.savefig_kwargs)
         plt.close(fig)
 
+    def _get_scale_filter(self) -> str:
+        """
+        Generate the appropriate scale filter based on odd_dimension_handling setting.
+
+        Returns
+        -------
+        str
+            FFmpeg scale filter string for handling odd dimensions.
+        """
+        if self.odd_dimension_handling == "none":
+            return ""
+        elif self.odd_dimension_handling == "round_up":
+            return "scale='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':flags=lanczos"
+        elif self.odd_dimension_handling == "round_down":
+            return "scale='if(mod(iw,2),iw-1,iw)':'if(mod(ih,2),ih-1,ih)':flags=lanczos"
+        elif self.odd_dimension_handling == "crop":
+            return "crop='if(mod(iw,2),iw-1,iw)':'if(mod(ih,2),ih-1,ih)':0:0"
+        elif self.odd_dimension_handling == "pad":
+            return "pad='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':0:0:color=white"
+
     def save_video(self) -> None:
         """
         Compile saved frames into a video or GIF using ffmpeg.
@@ -197,9 +240,9 @@ class Loom:
         This method uses ffmpeg to create the final animation from the saved frames.
         The output format is determined by the file extension of the output filepath.
         """
-        # Scale video in case number of pixels in either dimensions is odd.
+        # Handle odd pixel dimensions based on user preference
         # See: https://github.com/ali-ramadhan/matplotloom/issues/1
-        scale_filter = "scale='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':flags=lanczos"
+        scale_filter = self._get_scale_filter()
 
         if self.file_format == "mp4":
             command = [
@@ -207,11 +250,16 @@ class Loom:
                 "-y",
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
-                "-vf", scale_filter,
+            ]
+
+            if scale_filter:
+                command.extend(["-vf", scale_filter])
+
+            command.extend([
                 "-c:v", "libx264",
                 "-pix_fmt", "yuv420p",
                 str(self.output_filepath)
-            ]
+            ])
         elif self.file_format == "gif":
             command = [
                 "ffmpeg",
@@ -219,10 +267,15 @@ class Loom:
                 "-framerate", str(self.fps),
                 "-f", "image2",
                 "-i", str(self.frames_directory / "frame_%06d.png"),
-                # See: https://superuser.com/a/556031 for the split and palette filters
-                "-vf", f"{scale_filter},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
-                str(self.output_filepath)
             ]
+
+            # See: https://superuser.com/a/556031 for the split and palette filters
+            if scale_filter:
+                gif_filter = f"{scale_filter},split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
+            else:
+                gif_filter = "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
+
+            command.extend(["-vf", gif_filter, str(self.output_filepath)])
 
         PIPE = subprocess.PIPE
         process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
