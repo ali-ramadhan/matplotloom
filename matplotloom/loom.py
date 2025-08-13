@@ -180,7 +180,8 @@ class Loom:
     def save_frame(
             self,
             fig: Figure,
-            frame_number: Optional[int] = None
+            frame_number: Optional[int] = None,
+            close_fig: bool = True,
         ) -> None:
         """
         Save a single frame of the animation.
@@ -210,7 +211,8 @@ class Loom:
                 print(f"Saving frame {frame_number} to {frame_filepath}")
 
         fig.savefig(frame_filepath, **self.savefig_kwargs)
-        plt.close(fig)
+        if close_fig:
+            plt.close(fig)
 
     def _get_scale_filter(self) -> str:
         """
