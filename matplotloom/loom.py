@@ -21,17 +21,15 @@ class Loom:
     ----------
     output_filepath : Union[Path, str]
         Path to save the final animation file.
-    frames_directory : Union[Path, str, None], optional
-        Directory to save individual frames. If None, a temporary directory is used.
     fps : int, optional
         Frames per second for the output animation. Default is 30.
+    frames_directory : Union[Path, str, None], optional
+        Directory to save individual frames. If None, a temporary directory is used.
     keep_frames : bool, optional
         Whether to keep individual frame files after creating the animation.
         Default is False.
     overwrite : bool, optional
         Whether to overwrite the output file if it already exists. Default is False.
-    verbose : bool, optional
-        Whether to print detailed information during the process. Default is False.
     parallel : bool, optional
         Whether to enable parallel frame saving. Default is False.
         When True, this enables a mode where frames can be saved concurrently,
@@ -43,14 +41,6 @@ class Loom:
             - Frames can be created and saved in any order.
             - The user is responsible for parallelizing the frame creation process,
               typically using tools like joblib, multiprocessing, or concurrent.futures.
-
-    show_ffmpeg_output : bool, optional
-        Whether to show ffmpeg output when saving the video. Default is False.
-        When True, the ffmpeg command and its stdout/stderr output will be printed
-        during video creation, regardless of the verbose setting.
-    savefig_kwargs : dict, optional
-        Additional keyword arguments to pass to matplotlib's savefig function.
-        Default is {}.
     odd_dimension_handling : str, optional
         How to handle odd pixel dimensions that some codecs (like H.264) cannot process.
         Options:
@@ -60,6 +50,15 @@ class Loom:
         - "pad": Add 1 pixel of padding to bottom/right edges if dimensions are odd
         - "none": Do nothing, let FFmpeg handle it (may fail for some codecs)
         Default is "round_up".
+    savefig_kwargs : dict, optional
+        Additional keyword arguments to pass to matplotlib's savefig function.
+        Default is {}.
+    verbose : bool, optional
+        Whether to print detailed information during the process. Default is False.
+    show_ffmpeg_output : bool, optional
+        Whether to show ffmpeg output when saving the video. Default is False.
+        When True, the ffmpeg command and its stdout/stderr output will be printed
+        during video creation, regardless of the verbose setting.
 
     Raises
     ------
@@ -69,15 +68,15 @@ class Loom:
     def __init__(
         self,
         output_filepath: Union[Path, str],
-        frames_directory: Optional[Union[Path, str]] = None,
         fps: int = 30,
+        frames_directory: Optional[Union[Path, str]] = None,
         keep_frames: bool = False,
         overwrite: bool = False,
-        verbose: bool = False,
         parallel: bool = False,
-        show_ffmpeg_output: bool = False,
-        savefig_kwargs: Optional[Dict[str, Any]] = None,
         odd_dimension_handling: str = "round_up",
+        savefig_kwargs: Optional[Dict[str, Any]] = None,
+        verbose: bool = False,
+        show_ffmpeg_output: bool = False,
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
         self.fps: int = fps
