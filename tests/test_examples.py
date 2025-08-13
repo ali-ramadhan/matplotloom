@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 
-from pathlib import Path
+
 from cmocean import cm
 
 from cartopy.feature.nightshade import Nightshade
@@ -15,8 +15,8 @@ from tqdm import tqdm
 
 from matplotloom import Loom
 
-def test_sine_wave():
-    with Loom("sine_wave.gif", fps=30) as loom:
+def test_sine_wave(test_output_dir):
+    with Loom(test_output_dir / "test_sine_wave.gif", fps=30) as loom:
         for phase in np.linspace(0, 2*np.pi, 100):
             fig, ax = plt.subplots()
 
@@ -28,10 +28,10 @@ def test_sine_wave():
 
             loom.save_frame(fig)
 
-    assert Path("sine_wave.gif").is_file()
-    assert Path("sine_wave.gif").stat().st_size > 0
+    assert (test_output_dir / "test_sine_wave.gif").is_file()
+    assert (test_output_dir / "test_sine_wave.gif").stat().st_size > 0
 
-def test_parallel_sine_wave():
+def test_parallel_sine_wave(test_output_dir):
     def plot_frame(phase, frame_number, loom):
         fig, ax = plt.subplots()
 
@@ -43,7 +43,7 @@ def test_parallel_sine_wave():
 
         loom.save_frame(fig, frame_number)
 
-    with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
+    with Loom(test_output_dir / "test_parallel_sine_wave.gif", fps=30, parallel=True) as loom:
         phases = np.linspace(0, 2*np.pi, 10)
 
         Parallel(n_jobs=-1)(
@@ -51,11 +51,11 @@ def test_parallel_sine_wave():
             for i, phase in enumerate(phases)
         )
 
-    assert Path("parallel_sine_wave.gif").is_file()
-    assert Path("parallel_sine_wave.gif").stat().st_size > 0
+    assert (test_output_dir / "test_parallel_sine_wave.gif").is_file()
+    assert (test_output_dir / "test_parallel_sine_wave.gif").stat().st_size > 0
 
-def test_rotating_circular_sine_wave():
-    with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
+def test_rotating_circular_sine_wave(test_output_dir):
+    with Loom(test_output_dir / "test_rotating_circular_sine_wave.mp4", fps=10) as loom:
         for i in range(5):
             fig, ax = plt.subplots(figsize=(12, 8), subplot_kw={"projection": "3d"})
 
@@ -73,10 +73,10 @@ def test_rotating_circular_sine_wave():
 
             loom.save_frame(fig)
 
-    assert Path("rotating_circular_sine_wave.mp4").is_file()
-    assert Path("rotating_circular_sine_wave.mp4").stat().st_size > 0
+    assert (test_output_dir / "test_rotating_circular_sine_wave.mp4").is_file()
+    assert (test_output_dir / "test_rotating_circular_sine_wave.mp4").stat().st_size > 0
 
-def test_bessel_wave():
+def test_bessel_wave(test_output_dir):
     def bessel_wave(r, t, k, omega, A):
         return A * j0(k*r - omega*t)
 
@@ -103,7 +103,7 @@ def test_bessel_wave():
         return fig
 
     loom = Loom(
-        "bessel_wave.mp4",
+        test_output_dir / "test_bessel_wave.mp4",
         fps = 30,
         overwrite = True,
         verbose = True,
@@ -122,10 +122,10 @@ def test_bessel_wave():
             fig = create_frame(x, y, t)
             loom.save_frame(fig)
 
-    assert Path("bessel_wave.mp4").is_file()
-    assert Path("bessel_wave.mp4").stat().st_size > 0
+    assert (test_output_dir / "test_bessel_wave.mp4").is_file()
+    assert (test_output_dir / "test_bessel_wave.mp4").stat().st_size > 0
 
-def test_double_pendulum():
+def test_double_pendulum(test_output_dir):
     g = 9.80665 # standard acceleration of gravity [m/s²]
     l1, l2 = 1, 1  # pendulum arms lengths [m]
     m1, m2 = 1, 1  # pendulum masses [kg]
@@ -167,7 +167,7 @@ def test_double_pendulum():
     y2 = y1 - l2 * np.cos(θ2)
 
     loom = Loom(
-        "double_pendulum.mp4",
+        test_output_dir / "test_double_pendulum.mp4",
         fps = 60,
         overwrite = True,
         savefig_kwargs = {"bbox_inches": "tight"}
@@ -203,10 +203,10 @@ def test_double_pendulum():
 
             loom.save_frame(fig)
 
-    assert Path("double_pendulum.mp4").is_file()
-    assert Path("double_pendulum.mp4").stat().st_size > 0
+    assert (test_output_dir / "test_double_pendulum.mp4").is_file()
+    assert (test_output_dir / "test_double_pendulum.mp4").stat().st_size > 0
 
-def test_night_time_shading():
+def test_night_time_shading(test_output_dir):
     def plot_frame(day_of_year, loom, frame_number):
         date = datetime.datetime(2024, 1, 1, 12) + datetime.timedelta(days=day_of_year-1)
 
@@ -234,7 +234,7 @@ def test_night_time_shading():
         loom.save_frame(fig, frame_number)
 
     loom = Loom(
-        "night_time_shading.mp4",
+        test_output_dir / "test_night_time_shading.mp4",
         fps = 10,
         verbose = True,
         overwrite = True,
@@ -250,5 +250,5 @@ def test_night_time_shading():
             for i, day_of_year in enumerate(days_of_year)
     )
 
-    assert Path("night_time_shading.mp4").is_file()
-    assert Path("night_time_shading.mp4").stat().st_size > 0
+    assert (test_output_dir / "test_night_time_shading.mp4").is_file()
+    assert (test_output_dir / "test_night_time_shading.mp4").stat().st_size > 0
