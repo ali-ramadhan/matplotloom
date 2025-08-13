@@ -199,7 +199,7 @@ class Loom:
         """
         # Scale video in case number of pixels in either dimensions is odd.
         # See: https://github.com/ali-ramadhan/matplotloom/issues/1
-        scale_filter = "scale='if(mod(iw,2),-2,iw)':'if(mod(ih,2),-2,ih)':flags=lanczos"
+        scale_filter = "scale='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':flags=lanczos"
 
         if self.file_format == "mp4":
             command = [
