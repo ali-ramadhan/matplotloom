@@ -7,16 +7,16 @@ from matplotlib.figure import Figure
 from matplotloom import Loom
 from PIL import Image
 
-def test_init_loom(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_init_loom(test_output_dir):
+    output_filepath = test_output_dir / "test_init_loom.mp4"
     loom = Loom(output_filepath=output_filepath, verbose=True)
 
     assert loom.output_directory.exists()
     assert loom.frames_directory.exists()
 
-def test_init_loom_with_custom_frames_directory(tmp_path):
-    output_filepath = tmp_path / "output.gif"
-    custom_frames_dir = tmp_path / "frames"
+def test_init_loom_with_custom_frames_directory(test_output_dir):
+    output_filepath = test_output_dir / "test_init_loom_custom_frames.gif"
+    custom_frames_dir = test_output_dir / "frames"
 
     loom_with_custom_dir = Loom(
         output_filepath=output_filepath,
@@ -27,8 +27,8 @@ def test_init_loom_with_custom_frames_directory(tmp_path):
     assert loom_with_custom_dir.output_directory.exists()
     assert loom_with_custom_dir.frames_directory.exists()
 
-def test_save_frame(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_save_frame(test_output_dir):
+    output_filepath = test_output_dir / "test_save_frame.mp4"
     loom = Loom(output_filepath=output_filepath, verbose=True)
 
     fig = Figure()
@@ -39,8 +39,8 @@ def test_save_frame(tmp_path):
     assert len(loom.frame_filepaths) == 1
     assert loom.frame_filepaths[0].exists()
 
-def test_video_creation(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_video_creation(test_output_dir):
+    output_filepath = test_output_dir / "test_video_creation.mp4"
     loom = Loom(output_filepath=output_filepath, verbose=True)
 
     fig = Figure()
@@ -51,8 +51,8 @@ def test_video_creation(tmp_path):
     loom.save_video()
     assert loom.output_filepath.exists()
 
-def test_dont_keep_frames(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_dont_keep_frames(test_output_dir):
+    output_filepath = test_output_dir / "test_dont_keep_frames.mp4"
     loom = Loom(
         output_filepath=output_filepath,
         keep_frames=False,
@@ -68,8 +68,8 @@ def test_dont_keep_frames(tmp_path):
 
     assert not loom.frame_filepaths[0].exists()
 
-def test_keep_frames(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_keep_frames(test_output_dir):
+    output_filepath = test_output_dir / "test_keep_frames.mp4"
     loom = Loom(
         output_filepath=output_filepath,
         keep_frames=True,
@@ -85,8 +85,8 @@ def test_keep_frames(tmp_path):
 
     assert loom.frame_filepaths[0].exists()
 
-def test_context_manager(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_context_manager(test_output_dir):
+    output_filepath = test_output_dir / "test_context_manager.mp4"
     with Loom(output_filepath=output_filepath) as loom:
         fig = Figure()
         ax = fig.subplots()
@@ -95,8 +95,8 @@ def test_context_manager(tmp_path):
 
     assert output_filepath.exists()
 
-def test_overwrite(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_overwrite(test_output_dir):
+    output_filepath = test_output_dir / "test_overwrite.mp4"
 
     with open(output_filepath, "w") as f:
         f.write("Dummy content")
@@ -115,8 +115,8 @@ def test_overwrite(tmp_path):
     assert output_filepath.exists()
     assert output_filepath.stat().st_size > len("Dummy content")
 
-def test_loom_error_handling(tmp_path):
-    output_file = tmp_path / "test_error.mp4"
+def test_loom_error_handling(test_output_dir):
+    output_file = test_output_dir / "test_loom_error_handling.mp4"
 
     with pytest.raises(ValueError, match="Test error"):
         with Loom(output_file, verbose=True) as loom:
@@ -130,8 +130,8 @@ def test_loom_error_handling(tmp_path):
     frames_dir = Path(loom.frames_directory)
     assert not any(frames_dir.glob("frame_*.png"))
 
-def test_show_ffmpeg_output(tmp_path):
-    output_filepath = tmp_path / "output.mp4"
+def test_show_ffmpeg_output(test_output_dir):
+    output_filepath = test_output_dir / "test_show_ffmpeg_output.mp4"
 
     loom = Loom(
         output_filepath=output_filepath,
@@ -151,7 +151,7 @@ def test_show_ffmpeg_output(tmp_path):
 
     assert loom.output_filepath.exists()
 
-    output_filepath2 = tmp_path / "output2.mp4"
+    output_filepath2 = test_output_dir / "test_show_ffmpeg_output_second.mp4"
     loom2 = Loom(output_filepath=output_filepath2)
 
     assert loom2.show_ffmpeg_output is False
@@ -166,12 +166,12 @@ def test_show_ffmpeg_output(tmp_path):
     assert loom2.output_filepath.exists()
 
 @pytest.mark.parametrize("odd_handling", ["round_up", "round_down", "crop", "pad"])
-def test_odd_pixel_dimensions(tmp_path, odd_handling):
+def test_odd_pixel_dimensions(test_output_dir, odd_handling):
     """
     Test that Loom can handle odd pixel dimensions properly with different handling
     options.
     """
-    output_filepath = tmp_path / f"output_odd_{odd_handling}.mp4"
+    output_filepath = test_output_dir / f"test_odd_pixel_dimensions_{odd_handling}.mp4"
 
     loom = Loom(
         output_filepath=output_filepath,
@@ -225,9 +225,9 @@ def test_odd_pixel_dimensions(tmp_path, odd_handling):
     assert video_created and file_size > 0, f"Video should be created successfully with {odd_handling} handling"
 
 
-def test_odd_dimension_handling_none_fails(tmp_path):
+def test_odd_dimension_handling_none_fails(test_output_dir):
     """Test that 'none' handling fails with H.264 codec and odd dimensions."""
-    output_filepath = tmp_path / "output_odd_none.mp4"
+    output_filepath = test_output_dir / "test_odd_dimension_handling_none_fails.mp4"
 
     loom = Loom(
         output_filepath=output_filepath,
