@@ -1,5 +1,4 @@
 import datetime
-import pytest
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,10 +22,10 @@ def test_sine_wave():
 
             x = np.linspace(0, 2*np.pi, 200)
             y = np.sin(x + phase)
-            
+
             ax.plot(x, y)
             ax.set_xlim(0, 2*np.pi)
-            
+
             loom.save_frame(fig)
 
     assert Path("sine_wave.gif").is_file()
@@ -38,17 +37,17 @@ def test_parallel_sine_wave():
 
         x = np.linspace(0, 2*np.pi, 200)
         y = np.sin(x + phase)
-        
+
         ax.plot(x, y)
         ax.set_xlim(0, 2*np.pi)
-        
+
         loom.save_frame(fig, frame_number)
 
     with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
         phases = np.linspace(0, 2*np.pi, 10)
-        
+
         Parallel(n_jobs=-1)(
-            delayed(plot_frame)(phase, i, loom) 
+            delayed(plot_frame)(phase, i, loom)
             for i, phase in enumerate(phases)
         )
 
@@ -59,15 +58,15 @@ def test_rotating_circular_sine_wave():
     with Loom("rotating_circular_sine_wave.mp4", fps=10) as loom:
         for i in range(5):
             fig, ax = plt.subplots(figsize=(12, 8), subplot_kw={"projection": "3d"})
-            
+
             X = np.arange(-5, 5, 0.25)
             Y = np.arange(-5, 5, 0.25)
             X, Y = np.meshgrid(X, Y)
             R = np.sqrt(X**2 + Y**2)
             Z = np.sin(R)
-            
+
             surf = ax.plot_surface(X, Y, Z, cmap="coolwarm")
-            
+
             ax.view_init(azim=i*10)
             ax.set_zlim(-1.01, 1.01)
             fig.colorbar(surf, shrink=0.5, aspect=5)
@@ -83,16 +82,16 @@ def test_bessel_wave():
 
     def create_frame(x, y, t):
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-        
+
         r = np.sqrt(x**2 + y**2)
         z = bessel_wave(r, t, k=2, omega=1, A=1)
-        
+
         pcm = ax1.pcolormesh(x, y, z, cmap=cm.balance, shading='auto', vmin=-1, vmax=1)
         ax1.set_title(f"Bessel wave: t = {t:.3f}")
         ax1.set_xlabel("x")
         ax1.set_ylabel("y")
         fig.colorbar(pcm, ax=ax1)
-        
+
         mid = z.shape[0] // 2
         ax2.plot(x[mid], z[mid])
         ax2.set_xlim(x.min(), x.max())
@@ -100,7 +99,7 @@ def test_bessel_wave():
         ax2.set_title("Cross-section at y = 0")
         ax2.set_xlabel("x")
         ax2.set_ylabel("z")
-        
+
         return fig
 
     loom = Loom(
@@ -135,10 +134,10 @@ def test_double_pendulum():
     def derivatives(t, state):
         θ1, ω1, θ2, ω2 = state
         dydt = np.zeros_like(state)
-        
+
         dydt[0] = ω1
         dydt[2] = ω2
-        
+
         Δθ = θ2 - θ1
 
         denominator1 = (m1 + m2) * l1 - m2 * l1 * np.cos(Δθ)**2
@@ -152,7 +151,7 @@ def test_double_pendulum():
                 + (m1 + m2) * g * np.sin(θ1) * np.cos(Δθ)
                 - (m1 + m2) * l1 * ω1**2 * np.sin(Δθ)
                 - (m1 + m2) * g * np.sin(θ2)) / denominator2
-        
+
         return dydt
 
     t_span = (0, 1)
@@ -177,7 +176,7 @@ def test_double_pendulum():
     with loom:
         for i, t in tqdm(enumerate(times), total=len(times)):
             fig, ax = plt.subplots(figsize=(8, 8))
-            
+
             ax.plot(
                 [0, x1[i], x2[i]],
                 [0, y1[i], y2[i]],
@@ -195,9 +194,9 @@ def test_double_pendulum():
                 color = "red",
                 alpha = 0.5
             )
-            
+
             ax.set_title(f"Double Pendulum: t = {t:.3f}s")
-            
+
             ax.set_xlim(-2.2, 2.2)
             ax.set_ylim(-2.2, 2.2)
             ax.set_aspect("equal", adjustable="box")
@@ -222,7 +221,7 @@ def test_night_time_shading():
         ax3 = fig.add_subplot(1, 3, 3, projection=proj3)
 
         fig.suptitle(f"Night time shading for {date} UTC")
-        
+
         ax1.stock_img()
         ax1.add_feature(Nightshade(date, alpha=0.2))
 
@@ -245,7 +244,7 @@ def test_night_time_shading():
     with loom:
         n_days_to_test = 5
         days_of_year = range(1, n_days_to_test + 1)
-        
+
         Parallel(n_jobs=-1)(
             delayed(plot_frame)(day_of_year, loom, i)
             for i, day_of_year in enumerate(days_of_year)
