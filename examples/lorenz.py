@@ -70,7 +70,7 @@ class LorenzPlotter:
         loom.save_frame(fig, i - 1)
 
 
-with Loom('lorenz.mp4', fps=60, parallel=True, overwrite=True) as loom:
+with Loom('lorenz.mp4', fps=60, parallel=True) as loom:
     attractor = LorenzPlotter()
     attractor.initialize(10000)
     Parallel(n_jobs=-1)(delayed(attractor.get_frame)(i, loom) for i in attractor.frames)
