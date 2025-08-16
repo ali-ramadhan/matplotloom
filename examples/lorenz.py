@@ -34,7 +34,7 @@ class Lorenz:
 
 @dataclass
 class LorenzPlotter:
-    plot_speed: int = 20
+    steps_per_frame: int = 20
     attractor = Lorenz()
     points: list[tuple[float, float, float]] = field(default_factory=list)
 
@@ -46,11 +46,11 @@ class LorenzPlotter:
 
     @property
     def frames(self) -> list[int]:
-        return list(range(1, len(self.points) // self.plot_speed))
+        return list(range(1, len(self.points) // self.steps_per_frame))
 
     def get_frame(self, i: int, loom: Loom):
         fig, ax = plt.subplots(figsize=(12, 8), subplot_kw={'projection': '3d'})
-        points = np.array(self.points[: i * self.plot_speed])
+        points = np.array(self.points[: i * self.steps_per_frame])
         xs, ys, zs = points.T
         segments = np.array([points[:-1], points[1:]]).transpose(1, 0, 2)
         norm = Normalize(vmin=0, vmax=len(xs))
@@ -61,7 +61,9 @@ class LorenzPlotter:
         ax.set_ylim(-30, 30)
         ax.set_zlim(0, 50)
         ax.view_init(
-            azim=(np.pi * 1.7 + 0.8 * np.sin(2.0 * np.pi * i * self.plot_speed / len(self.frames) / 10)) * 180.0 / np.pi
+            azim=(np.pi * 1.7 + 0.8 * np.sin(2.0 * np.pi * i * self.steps_per_frame / len(self.frames) / 10))
+            * 180.0
+            / np.pi
         )
         ax.set_axis_off()
         ax.grid(visible=False)
