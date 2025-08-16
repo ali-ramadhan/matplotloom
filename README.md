@@ -345,37 +345,7 @@ with loom:
 
 https://github.com/ali-ramadhan/matplotloom/assets/20099589/dad48d56-73ae-4cb2-ba71-d21855c72215
 
-## Looming in parallel
-
-By passing `parallel=True` when creating a `Loom`, you can save frames using `loom.save_frame(fig, frame_number)` which allows you to plot and save all your frames in parallel. One easy way to leverage this is by using joblib to parallelize the for loop. For example, here's how you can parallelize the simple sine wave example:
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotloom import Loom
-from joblib import Parallel, delayed
-
-def plot_frame(phase, frame_number, loom):
-    fig, ax = plt.subplots()
-
-    x = np.linspace(0, 2*np.pi, 200)
-    y = np.sin(x + phase)
-
-    ax.plot(x, y)
-    ax.set_xlim(0, 2*np.pi)
-
-    loom.save_frame(fig, frame_number)
-
-with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
-    phases = np.linspace(0, 2*np.pi, 100)
-
-    Parallel(n_jobs=-1)(
-        delayed(plot_frame)(phase, i, loom)
-        for i, phase in enumerate(phases)
-    )
-```
-
-## Example: Lorenz Attractor
+## Lorenz Attractor
 
 This example shows how you can use `matplotloom` to create an animation of a Lorenz attractor (inspired by [an example from the Makie library](https://docs.makie.org/stable/)).
 
@@ -455,4 +425,36 @@ with Loom('lorenz.mp4', fps=60, parallel=True) as loom:
     attractor = LorenzPlotter()
     attractor.initialize(10000)
     Parallel(n_jobs=-1)(delayed(attractor.get_frame)(i, loom) for i in attractor.frames)
+```
+
+https://github.com/user-attachments/assets/69b02d78-386d-4843-90df-b1a43600cfa5
+
+## Looming in parallel
+
+By passing `parallel=True` when creating a `Loom`, you can save frames using `loom.save_frame(fig, frame_number)` which allows you to plot and save all your frames in parallel. One easy way to leverage this is by using joblib to parallelize the for loop. For example, here's how you can parallelize the simple sine wave example:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotloom import Loom
+from joblib import Parallel, delayed
+
+def plot_frame(phase, frame_number, loom):
+    fig, ax = plt.subplots()
+
+    x = np.linspace(0, 2*np.pi, 200)
+    y = np.sin(x + phase)
+
+    ax.plot(x, y)
+    ax.set_xlim(0, 2*np.pi)
+
+    loom.save_frame(fig, frame_number)
+
+with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
+    phases = np.linspace(0, 2*np.pi, 100)
+
+    Parallel(n_jobs=-1)(
+        delayed(plot_frame)(phase, i, loom)
+        for i, phase in enumerate(phases)
+    )
 ```
