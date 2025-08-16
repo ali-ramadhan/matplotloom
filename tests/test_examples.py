@@ -318,7 +318,7 @@ def test_lorenz(test_output_dir):
 
     with Loom(test_output_dir / 'test_lorenz.mp4', fps=60, parallel=True) as loom:
         attractor = LorenzPlotter()
-        attractor.initialize(200)
+        attractor.initialize(1000)
         Parallel(n_jobs=-1)(delayed(attractor.get_frame)(i, loom) for i in attractor.frames[:5])
 
     assert (test_output_dir / "test_lorenz.mp4").is_file()
