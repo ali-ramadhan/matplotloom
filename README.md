@@ -345,7 +345,7 @@ with loom:
 
 https://github.com/ali-ramadhan/matplotloom/assets/20099589/dad48d56-73ae-4cb2-ba71-d21855c72215
 
-## Lorenz Attractor
+### Lorenz Attractor
 
 This example shows how you can use `matplotloom` to create an animation of a Lorenz attractor (inspired by [an example from the Makie library](https://docs.makie.org/stable/)).
 
