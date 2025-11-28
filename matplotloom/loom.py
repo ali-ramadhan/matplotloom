@@ -10,6 +10,8 @@ from matplotlib.figure import Figure
 
 from IPython.display import Video, Image
 
+DEFAULT_FFMPEG_PATH = plt.rcParams['animation.ffmpeg_path']
+
 class Loom:
     """
     A class for creating animations from matplotlib figures.
@@ -59,6 +61,9 @@ class Loom:
         Whether to show ffmpeg output when saving the video. Default is False.
         When True, the ffmpeg command and its stdout/stderr output will be printed
         during video creation, regardless of the verbose setting.
+    ffmpeg_path : Union[Path, str, None], optional
+        Path to ffmpeg, if not provided will use the default path.
+            Default path is configured to use matplotlib's rcParams ffmpeg path
 
     Raises
     ------
@@ -77,6 +82,7 @@ class Loom:
         savefig_kwargs: Optional[Dict[str, Any]] = None,
         verbose: bool = False,
         show_ffmpeg_output: bool = False,
+        ffmpeg_path: Optional[Union[Path, str]] = None,
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
         self.fps: int = fps
@@ -86,7 +92,7 @@ class Loom:
         self.parallel: bool = parallel
         self.show_ffmpeg_output: bool = show_ffmpeg_output
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
-
+       
         valid_odd_options = {"round_up", "round_down", "crop", "pad", "none"}
         if odd_dimension_handling not in valid_odd_options:
             raise ValueError(
@@ -107,6 +113,13 @@ class Loom:
             self.frames_directory = Path(self._temp_dir.name)
         else:
             self.frames_directory = Path(frames_directory)
+        
+        # Use matplotlib ffmpeg
+        self.ffmpeg_path: str = DEFAULT_FFMPEG_PATH
+        if ffmpeg_path is not None:
+            _ffmpeg_path = Path(ffmpeg_path)
+            if _ffmpeg_path.exists():
+                self.ffmpeg_path = str(_ffmpeg_path.absolute())
 
         # We don't use the frame counter in parallel mode.
         self.frame_counter: Optional[int] = 0 if not self.parallel else None
@@ -247,7 +260,7 @@ class Loom:
 
         if self.file_format == "mp4":
             command = [
-                "ffmpeg",
+                self.ffmpeg_path,
                 "-y",
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
@@ -263,7 +276,7 @@ class Loom:
             ])
         elif self.file_format == "gif":
             command = [
-                "ffmpeg",
+                self.ffmpeg_path,
                 "-y",
                 "-framerate", str(self.fps),
                 "-f", "image2",

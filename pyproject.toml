@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "matplotloom"
-version = "0.9.1"
+version = "0.9.2"
 description = "Weave your frames into matplotlib animations."
 authors = [
     { name = "ali-ramadhan", email = "ali.hh.ramadhan@gmail.com" }
