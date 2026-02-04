@@ -8,7 +8,7 @@ on:
     branches: [main]
   pull_request:
   schedule:
-    # Run nightly at 3 AM Mountain Time (10 AM UTC)
+    # Run nightly at 3am Mountain Time (10am UTC)
     - cron: '0 10 * * *'
 
 jobs:
@@ -23,10 +23,10 @@ jobs:
         shell: bash
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv and set the python version
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
 
