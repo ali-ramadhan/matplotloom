@@ -7,6 +7,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    # Run nightly at 3 AM Mountain Time (10 AM UTC)
+    - cron: '0 10 * * *'
 
 jobs:
   ci:
