@@ -1,7 +1,8 @@
-import subprocess
+import subprocess, os
+import warnings
 
 from pathlib import Path
-from typing import Union, Optional, Dict, Type, List, Any
+from typing import Literal, Union, Optional, Dict, Type, List, Any
 from types import TracebackType
 from tempfile import TemporaryDirectory
 
@@ -9,6 +10,17 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
 from IPython.display import Video, Image
+
+# This should allow 
+_LOOM_DEFAULT_ENVIRON_VAR = "LOOM_FFMPEG_PATH"
+
+if _LOOM_DEFAULT_ENVIRON_VAR in os.environ:
+    DEFAULT_FFMPEG_PATH = os.environ[_LOOM_DEFAULT_ENVIRON_VAR]
+else:
+    DEFAULT_FFMPEG_PATH: str = plt.rcParams['animation.ffmpeg_path']
+    os.environ[_LOOM_DEFAULT_ENVIRON_VAR] = DEFAULT_FFMPEG_PATH
+
+VALID_SCALE_ODD_OPTIONS = {"round_up", "round_down", "crop", "pad", "none"}
 
 class Loom:
     """
@@ -59,6 +71,9 @@ class Loom:
         Whether to show ffmpeg output when saving the video. Default is False.
         When True, the ffmpeg command and its stdout/stderr output will be printed
         during video creation, regardless of the verbose setting.
+    ffmpeg_path : Union[Path, str, None], optional
+        Path to ffmpeg, if not provided will use the default path.
+            Default path is configured to use matplotlib's rcParams ffmpeg path
 
     Raises
     ------
@@ -77,6 +92,8 @@ class Loom:
         savefig_kwargs: Optional[Dict[str, Any]] = None,
         verbose: bool = False,
         show_ffmpeg_output: bool = False,
+        ffmpeg_path: Optional[Union[Path, str]] = None,
+        enable_ffmpeg_path_fallback: bool = True,
     ) -> None:
         self.output_filepath: Path = Path(output_filepath)
         self.fps: int = fps
@@ -86,14 +103,15 @@ class Loom:
         self.parallel: bool = parallel
         self.show_ffmpeg_output: bool = show_ffmpeg_output
         self.savefig_kwargs: Dict[str, Any] = savefig_kwargs or {}
-
-        valid_odd_options = {"round_up", "round_down", "crop", "pad", "none"}
-        if odd_dimension_handling not in valid_odd_options:
+        self.enable_ffmpeg_path_fallback = enable_ffmpeg_path_fallback
+       
+        if odd_dimension_handling not in VALID_SCALE_ODD_OPTIONS:
             raise ValueError(
-                f"odd_dimension_handling must be one of {valid_odd_options}, "
+                f"odd_dimension_handling must be one of {VALID_SCALE_ODD_OPTIONS}, "
                 f"got {odd_dimension_handling}"
             )
         self.odd_dimension_handling: str = odd_dimension_handling
+        self._get_scale_filter() # Should throw value error if wrong
 
         if self.output_filepath.exists() and not self.overwrite:
             raise FileExistsError(
@@ -107,6 +125,38 @@ class Loom:
             self.frames_directory = Path(self._temp_dir.name)
         else:
             self.frames_directory = Path(frames_directory)
+        
+        # Allow providing of ffmpeg path to class instance
+        self.ffmpeg_path: Path = Path(DEFAULT_FFMPEG_PATH)
+
+        # Only throws an error if a path was provided
+        if ffmpeg_path is not None:
+            _ffmpeg_path = Path(ffmpeg_path)
+
+            # If the path exists use it
+            if _ffmpeg_path.exists():
+                # Store the absolute path as things can get a bit funky with
+                # path enrolment & multiprocessing.
+                self.ffmpeg_path = _ffmpeg_path.absolute()
+
+            else:
+                # Otherwise check if path fallback is enabled & warn the user
+                if self.enable_ffmpeg_path_fallback: 
+                    warnings.warn(
+                        f"Provided ffmpeg path of `{ffmpeg_path}` (resolving " +
+                        f"to `{_ffmpeg_path}`) was not found! Using default " +
+                        f"path of `{DEFAULT_FFMPEG_PATH}`"
+                    )
+                    
+                # If path fallback is not enabled, raise an error
+                else:
+                    raise FileNotFoundError(
+                        f"Provided ffmpeg path of `{ffmpeg_path}` (resolving " +
+                        f"to `{_ffmpeg_path}`) was not found!"
+                    )            
+                
+        # In theory this should never fail.
+        assert isinstance(self.ffmpeg_path, Path), "ffmpeg path is not a valid Path object?"
 
         # We don't use the frame counter in parallel mode.
         self.frame_counter: Optional[int] = 0 if not self.parallel else None
@@ -121,6 +171,7 @@ class Loom:
         if self.verbose:
             print(f"output_filepath: {self.output_filepath}")
             print(f"frames_directory: {self.frames_directory}")
+
 
     def __enter__(self) -> 'Loom':
         """
@@ -197,6 +248,8 @@ class Loom:
             raise ValueError("frame_number must be provided when parallel=True")
 
         if not self.parallel:
+            assert self.frame_counter is not None
+
             frame_filepath = self.frames_directory / f"frame_{self.frame_counter:06d}.png"
             self.frame_counter += 1
         else:
@@ -233,6 +286,9 @@ class Loom:
             return "crop='if(mod(iw,2),iw-1,iw)':'if(mod(ih,2),ih-1,ih)':0:0"
         elif self.odd_dimension_handling == "pad":
             return "pad='if(mod(iw,2),iw+1,iw)':'if(mod(ih,2),ih+1,ih)':0:0:color=white"
+        else:
+            raise ValueError(f"Scale Settings not one of `{VALID_SCALE_ODD_OPTIONS}`, " +
+                             f"got `{self.odd_dimension_handling}`")
 
     def save_video(self) -> None:
         """
@@ -247,7 +303,7 @@ class Loom:
 
         if self.file_format == "mp4":
             command = [
-                "ffmpeg",
+                str(self.ffmpeg_path),
                 "-y",
                 "-framerate", str(self.fps),
                 "-i", str(self.frames_directory / "frame_%06d.png"),
@@ -263,7 +319,7 @@ class Loom:
             ])
         elif self.file_format == "gif":
             command = [
-                "ffmpeg",
+                str(self.ffmpeg_path),
                 "-y",
                 "-framerate", str(self.fps),
                 "-f", "image2",
@@ -277,6 +333,8 @@ class Loom:
                 gif_filter = "split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse"
 
             command.extend(["-vf", gif_filter, str(self.output_filepath)])
+        else:
+            raise ValueError("Export File Format Not Valid!")
 
         PIPE = subprocess.PIPE
         process = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)

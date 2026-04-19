@@ -458,3 +458,37 @@ with Loom("parallel_sine_wave.gif", fps=30, parallel=True) as loom:
         for i, phase in enumerate(phases)
     )
 ```
+
+Providing a Custom FFmpeg Path
+------------------------------
+
+matplotloom supports providing custom FFmpeg path via three methods
+
+1. Set the matplotlib ``animation.ffmpeg_args`` [rcPrams](https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams) to the custom FFmpeg path 
+    * This is the default path matplotloom attempts to use
+2. Set the Environment Variable ``LOOM_FFMPEG_PATH`` to the custom FFmpeg path
+3. Pass the custom FFmpeg path as the ``ffmpeg_path`` argument when creating a ``Loom``
+
+```python
+ # Either the environ var OR matplotlib rcPram *needs* to be set BEFORE
+ #  importing matplotloom
+ import imageio_ffmpeg # A python library that provides an ffmpeg binary 
+ FFMPEG_PATH: str = imageio_ffmpeg.get_ffmpeg_exe()
+
+ # Configure matplotlib rcPrams, if your global / project rcPrams file
+ #  already sets this then you don't need to overload it. 
+ plt.rcParams['animation.ffmpeg_path'] = FFMPEG_PATH
+
+
+ # Alternatively could set the environment variable however this *does not*
+ #  inform matplotlib there is a valid ffmpeg binary so should be avoided.
+ #  The intention is to allow any more complex toolchains the option if needed.
+ import os
+ os.environ["LOOM_FFMPEG_PATH"] = FFMPEG_PATH
+
+
+ # Import Matplotloom once the path has been set
+ from matplotloom import Loom
+
+ # ...
+ ```

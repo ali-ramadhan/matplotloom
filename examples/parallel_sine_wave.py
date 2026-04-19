@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from joblib import Parallel, delayed
+
 from matplotloom import Loom
 
 def plot_frame(phase, frame_number, loom):
